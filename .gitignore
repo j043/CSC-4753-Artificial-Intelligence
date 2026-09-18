@@ -1,0 +1,12 @@
+# Godot-generated editor caches and imported resources.
+.godot/
+.import/
+
+# Local engine downloads, export templates, and extracted tooling.
+.tools/
+
+# Generated game exports and submission packages.
+builds/
+submission/
+
+# Keep project files, export presets, source assets, and .uid files tracked.
