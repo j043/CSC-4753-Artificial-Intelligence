@@ -244,3 +244,15 @@ yes it did. is there anything else that needs to be confirmed before committing 
 
 [13] September 18, 2026 | Commit M0
 awesome, lets commit this work, thank you!
+
+[14] September 21, 2026 | Resume A1 and locate specification
+hi codex! we're going to continue our work on A1, so you can continue recording prompts. It looks like somehow the spec got deleted, is there a way it can be remade from session memory? 
+
+[15] September 21, 2026 | M1 and M2 preparation
+oh whoops youre right, okay today I want to work on M1 and M2. any questions before we get started?
+
+[16] September 21, 2026 | Begin M1
+awesome thanks, lets get started with M1
+
+[17] September 21, 2026 | M1 walkthrough and commit
+i just walked through and it looks great! lets commit this before moving on to M2. 

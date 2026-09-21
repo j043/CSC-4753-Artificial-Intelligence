@@ -2,6 +2,8 @@
 
 ## Overview
 
+**Development update, September 21, 2026:** M0 is complete and M1 is implemented, with automated checks and a Windows export; the user completed a walkthrough and approved the visuals. Detailed control/edge-case checks remain open. The draft below records the design baseline, not current implementation evidence. See `docs/verification.md` for current results. M1 uses a branching graybox (security → control → coolant → observation, with maintenance east of control and lift west of security) and a separate gate-open facility tour while M3 progression is pending. M2 and later systems remain planned.
+
 **Status:** specification draft, September 18, 2026. All game behavior below is **planned**, not implemented or verified. This document authorizes no implementation by itself. The original acceptance criteria are preserved at the end of this document; proposed design details must satisfy them and may be revised without reducing required scope.
 
 Blackwell: Last Shift is a single-player, first-person 3D atmospheric horror game set in a fictional nuclear research facility during an emergency lockdown. The player is a night-shift technician trapped with engineer Mara Voss and security officer Eli Ward. An experimental energy system has produced an entity that imitates human voices over the intercom. The player restores emergency power, coordinates chamber isolation, and attempts evacuation.
