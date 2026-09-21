@@ -27,3 +27,22 @@ Testing results and unresolved limitations are recorded in verification.md. Late
 - Used real Compatibility-renderer screenshots to identify and fix overlapping signs and pause-panel transparency. Automated physics/interaction/menu checks now pass; hands-on feel, broad trap testing, and performance remain pending.
 
 - User completed a walkthrough, approved the visual result, and requested the M1 commit before M2. Detailed manual control/edge-case checks remain recorded separately from this general walkthrough confirmation.
+
+## September 21, 2026 - M2 NPC interaction slice
+
+- Added Mara and Eli with distinct project-authored primitive silhouettes, clothing/tool details, names and state labels.
+- Added local written situation/expertise branches, objective hints and commands. One menu/input-mode owner preserves the conversation through pause/resume and prevents player movement/look during dialogue.
+- Baked navigation from static collision geometry, including locked gates. Added safe route validation, separate follow offsets, role-specific station anchors, physical collision/yielding, wait/cancel, arrival readiness and named recovery messages.
+- Persistent physical blockage retries and then cancels to waiting; clearing the route and reassigning resumes normal play without teleportation. Station inspection has no story effects; actual repair, authorization, cooperative puzzle, NPC exchanges and event reactions remain M3/M4.
+- Fixed a native signal/property name collision and navigation grid mismatch during validation. M1 regression testing exposed an NPC starting position on the direct lift route; shifted both survivors clear of it.
+- All 28 M2 checks and 29 M1 regression checks pass. Inspected actual-renderer NPC/dialogue views and 720p/1080p command layouts. Added a dark menu backdrop and wrapped feedback text. M2 hands-on acceptance remains pending.
+
+- M2 user playtest found excess dialogue choices and followers orbiting out of view during mouse look. Simplified conversations to a short contextual hint, three opening choices and at most four buttons per page. Optional information remains available behind questions. Follow targets now update from player translation only; automated full-turn regression confirms both followers remain still. Updated M2 suite: 34 passing checks.
+
+- User requested dialogue-first Escape behavior: close dialogue, then allow a subsequent press to pause. Implemented and verified all three Escape transitions; updated build and instructions.
+
+### Dialogue presentation revision
+
+Enlarged dialogue body text to 30 pixels and placed choices in a horizontal row, with an Escape hint replacing End conversation. Commands close the menu immediately and release the NPC to act. Bottom-screen feedback types at 40 characters per second, holds for five seconds after completion, then clears; overlapping lines queue and timing freezes outside gameplay. All 56 M2 checks pass, including command closing, horizontal choices, exit-button removal, typing/hold/queue timing. Inspected actual-renderer horizontal choices at 720p and bottom feedback at 1080p. User acceptance remains pending.
+
+- User approved M2's revised appearance and feel and requested the milestone commit. Next session: M3 objective progression, repairs/security authorization, NPC exchanges and cooperative puzzle; see the specification for full scope.

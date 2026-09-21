@@ -9,3 +9,7 @@ For every added third-party asset, record its title, author, source URL, license
 ## M1 assets
 
 All graybox room geometry, machinery shapes, colors, signs, HUD, menus, and lighting are project-authored with Godot primitives and built-in fonts. No third-party textures, models, or audio were added. Runtime geometry is defined in `game/scripts/facility.gd`.
+
+## M2 assets
+
+Mara/Eli placeholder meshes, uniform/tool/badge details, colors, name labels and dialogue are project-authored with Godot primitives and built-in fonts. No third-party models, textures, audio, runtime service or AI API were added. NPC geometry is defined in `game/scripts/npc.gd`.

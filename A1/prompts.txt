@@ -256,3 +256,21 @@ awesome thanks, lets get started with M1
 
 [17] September 21, 2026 | M1 walkthrough and commit
 i just walked through and it looks great! lets commit this before moving on to M2. 
+
+[18] September 21, 2026 | Begin M2
+yippee! onward to M2! 
+
+[19] September 21, 2026 | Simplify dialogue and correct following
+ok a few notes: i think there are too many dialogue options. its a bit overwhelming to have so much information at once. is there any way the NPCs can present necessary information only and a limited amount of dialog options. also, the "follow me" feature does work, but the NPCs wont allow you to look at them anymore lol. they try to stay strictly behind the player at all times, and move away from POV when you turn around. 
+
+[20] September 21, 2026 | Escape closes dialogue first
+can we bind ESC to closing the dialogue menu when the menu is open? this forces the menu to close before the pause menu can be opened, improving UX
+
+[21] September 21, 2026 | Dialogue layout and feedback presentation
+lets make the dialogue text larger to focus the users eye, and lets organize the dialogue options below left to right instead of up and down. additionally, lets remove the "end conversation" button and instead allow the user to simply escape out of it, like they already do. next, lets make the dialogue menu close when you ask them to do something and then they immediately go do it, like following. lastly, lets have the users dialogue that appears OUTSIDE of the menu, like when they say "i cant go there," be typed across the bottom of the screen, persist for 5 seconds, then disappear. sound good?
+
+[22] September 21, 2026 | M1 and M2 summary request
+that looks great! canyou give me a brief summary of what was done in these two milestones?
+
+[23] September 21, 2026 | Approve and commit M2
+awesome, it looks fantastic. those fixes really improved the feel. go ahead and commit this and we will pick up m3 tomorrow! 

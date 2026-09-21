@@ -1,5 +1,7 @@
 extends CharacterBody3D
 signal interacted(message: String)
+signal npc_selected(npc: CharacterBody3D)
+var controls_enabled := true
 const WALK_SPEED := 3.4
 const SPRINT_SPEED := 5.6
 const SENSITIVITY := 0.0023
@@ -9,6 +11,7 @@ var ray: RayCast3D
 
 func _ready() -> void:
 	name = "Player"
+	collision_mask = 3
 	var collider := CollisionShape3D.new()
 	var capsule := CapsuleShape3D.new()
 	capsule.radius = 0.3
@@ -29,12 +32,13 @@ func _ready() -> void:
 	light.shadow_enabled = true
 	camera.add_child(light)
 	ray = RayCast3D.new()
+	ray.collision_mask = 3
 	ray.target_position = Vector3(0, 0, -3)
 	ray.add_exception(self)
 	camera.add_child(ray)
 
 func _unhandled_input(event: InputEvent) -> void:
-	if get_tree().paused:
+	if get_tree().paused or not controls_enabled:
 		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		rotate_y(-event.relative.x * SENSITIVITY)
@@ -44,7 +48,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("interact"):
 		var target := interaction_target()
 		if target:
-			interacted.emit(str(target.get_meta("message")))
+			if target.has_meta("npc"):
+				npc_selected.emit(target)
+			else:
+				interacted.emit(str(target.get_meta("message")))
 
 func interaction_target() -> Object:
 	ray.force_raycast_update()
@@ -54,6 +61,9 @@ func interaction_target() -> Object:
 	return null
 
 func _physics_process(delta: float) -> void:
+	if not controls_enabled:
+		velocity = Vector3.ZERO
+		return
 	var direction := Input.get_vector("walk_left", "walk_right", "walk_forward", "walk_back")
 	var movement := transform.basis * Vector3(direction.x, 0, direction.y)
 	var speed := SPRINT_SPEED if Input.is_action_pressed("sprint") else WALK_SPEED

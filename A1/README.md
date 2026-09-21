@@ -4,7 +4,7 @@ A1 for CSC-4753 Artificial Intelligence. See [the specification](spec.md) for sc
 
 ## Current status
 
-M1 is implemented: six connected graybox areas, collision, walking/sprinting, mouse look, flashlight, inspectable props, two initially locked gates, and start/pause/resume menus. A separate Facility tour opens the gates for layout testing. NPCs, objective progression, settings, and endings remain planned. The user completed a walkthrough and approved the visuals; detailed control/edge-case checks remain open; the professor's operating system remains unconfirmed. See [verification](docs/verification.md) for actual test results.
+M2 is implemented on top of the accepted M1 facility: Mara and Eli have distinct appearances, written branching dialogue, follow/wait commands, reachable station assignments, and blocked-path recovery. Dialogue locks player movement and supports pause/resume. The user approved the M1 walkthrough; The user approved the M2 playtest and interaction refinements; detailed edge-case checks remain documented separately. Objective progression, NPC exchanges, cooperative puzzle effects, settings, and endings remain planned. See [verification](docs/verification.md) for evidence and limitations.
 
 ## For the professor: run the submitted game
 
@@ -19,17 +19,25 @@ The current export targets **Windows x86_64**. The professor's operating system 
 3. Double-click **`Blackwell.exe`**. Keep **`Blackwell.pck`** in the same folder; it contains the game's packaged resources.
 4. Select **Start - initial lockdown** to explore with the initial gates locked, or **Facility tour - gates open** to walk all six areas. Press Escape for Resume, Return to Menu, or Quit.
 
-The final ZIP will include the executable, packaged resources, and any other required runtime files together. A final submission ZIP is not available yet. For the current local M1 build, open `builds/windows/` beside this README and launch the executable there. A source-only Git checkout does not include generated builds.
+The final ZIP will include the executable, packaged resources, and any other required runtime files together. A final submission ZIP is not available yet. For the current local M2 build, open `builds/windows/` beside this README and launch the executable there. A source-only Git checkout does not include generated builds.
 
 ### Controls and graphics
 
-Implemented: **WASD** walk, **mouse** look, hold **Shift** to sprint, **E** inspect the targeted object within 3 meters, **F** toggle flashlight, and **Escape** pause/resume. Menus support mouse and keyboard. Losing application focus pauses gameplay. The window opens at 1280×720.
+Implemented: **WASD** walk, **mouse** look, hold **Shift** to sprint, **E** inspect or talk to the targeted object/NPC within 3 meters, **F** toggle flashlight, and **Escape** pause/resume. Menus support mouse and keyboard. Losing application focus pauses gameplay. The window opens at 1280×720.
 
 There is no jumping, head bob, or camera shake. Settings (sensitivity, volume, brightness, low-quality preset, and resolution) arrive in M5. Gate A requires emergency power; Gate B requires power and security authorization. Those objectives arrive in M3. Facility tour is a development walkthrough, not completed story progression.
 
+### Talk to Mara and Eli
+
+Both survivors start in security. Aim at one and press **E**. Each conversation begins with a short next-step hint and two choices: **Follow me / Wait here** and **Help me with something**. Follow changes to Wait while following or working.
+
+Under Help, choose the relevant station task or **Ask a question** for optional details. Larger dialogue text sits above up to three choices arranged left to right. Escape closes the conversation; there is no exit button. Giving a command closes dialogue immediately so the NPC can act. Spoken feedback types across the bottom, remains for five seconds after typing completes, then disappears. Overlapping lines are queued. Real repair and authorization effects arrive in M3; Facility tour lets you assign the isolation stations.
+
+Followers track your movement, not your facing direction. Once they stop near you, turning around leaves them in place so you can talk. If someone reports a blocked route, clear the obstruction and speak to them again to follow or reassign. Escape closes an open conversation and restores gameplay. Press Escape again to pause. Losing application focus still pauses safely; Resume then returns to the conversation.
+
 ### Build verification
 
-M1 automated checks exercise traversal, collision, gate locks, interaction range, flashlight toggling, pause, and new-run reset. See the verification record for export results and the hands-on checklist. Automated checks do not establish visual quality, real mouse/keyboard usability, or gameplay performance. See the [verification record](docs/verification.md) for details and the [demonstration checklist](docs/demo-checklist.md) for the planned assignment demonstration.
+All 29 M1 regression checks and 56 M2 checks pass, covering navigation, dialogue input modes, follow/wait, station arrival, interruption, recovery, and gate connectivity. See the verification record for export results and the hands-on checklist. Automated checks do not establish visual quality, real mouse/keyboard usability, or gameplay performance. See the [verification record](docs/verification.md) for details and the [demonstration checklist](docs/demo-checklist.md) for the planned assignment demonstration.
 
 ## For the developer: edit, run, and export
 
@@ -39,7 +47,7 @@ Use **Godot 4.7.2 Standard**, with **GDScript** and the **Compatibility** render
 
 1. Download the Windows x86_64 Standard editor from the [official Godot 4.7.2 archive](https://godotengine.org/download/archive/4.7.2-stable/). Extract the ZIP into a tools folder and run the editor executable; no installer is required.
 2. In Godot's Project Manager, choose **Import**, select `A1/game/project.godot`, and open the project.
-3. Press **F6** to run the open scene or **F5** to run the project. The project displays the M1 menu. Choose Start or Facility tour; Escape opens the pause menu.
+3. Press **F6** to run the open scene or **F5** to run the project. The project displays the M2 menu. Choose Start or Facility tour; Escape opens the pause menu.
 4. Edit `.gd` source files in VS Code and save them; return to Godot to run the project. A VS Code extension is optional, not a runtime dependency.
 
 Local tooling, when downloaded by Codex, lives in the ignored `A1/.tools/` directory. It is not part of the submitted game or a required location on another computer. No additional art/audio downloads are needed for this baseline.
@@ -48,7 +56,7 @@ Local tooling, when downloaded by Codex, lives in the ignored `A1/.tools/` direc
 
 Install the **matching 4.7.2 export templates** through Godot's **Editor > Manage Export Templates**. Under **Project > Export**, select the included **Windows Desktop** preset and export to `A1/builds/windows/Blackwell.exe`. Keep the companion `Blackwell.pck` file with the executable. On the current development machine, the matching Windows x86_64 templates are already installed.
 
-Running the project with **F5** uses the current source. Launching `Blackwell.exe` uses the last exported version; export again after source changes to update it. The local M1 export is in `builds/windows/`, which is ignored by Git.
+Running the project with **F5** uses the current source. Launching `Blackwell.exe` uses the last exported version; export again after source changes to update it. The local M2 export is in `builds/windows/`, which is ignored by Git.
 
 ### Prepare the submission ZIP
 

@@ -2,6 +2,9 @@ extends Node3D
 ## Deterministic graybox: 12 m rooms, 3 m openings, no moving crush hazards.
 var tour := false
 var gates: Array[StaticBody3D] = []
+var navigation: NavigationRegion3D
+var navigation_ready := false
+var npcs: Array[CharacterBody3D] = []
 const ROOMS := [
 	[Vector3(0, 0, 0), "01  SECURITY STATION", "CONTROL / NORTH     LIFT / WEST", Color(0.24, 0.34, 0.40)],
 	[Vector3(0, 0, -12), "02  CONTROL ROOM", "COOLANT / NORTH     WORKSHOP / EAST", Color(0.27, 0.38, 0.32)],
@@ -37,6 +40,45 @@ func _ready() -> void:
 	sign_text("EXPERIMENTAL CHAMBER / SEALED", Vector3(0, 2.5, -41.4), 0, 25)
 	prop(Vector3(-15.5, 0.9, -2), Vector3(1, 1.8, 1), "Lift call panel", "Lift unavailable: isolate the chamber before evacuation.\nEndings and evacuation arrive in M4.")
 	box(Vector3(-16, 0.04, 1), Vector3(3, 0.08, 4), Color(0.6, 0.54, 0.27))
+	build_navigation()
+
+func build_navigation() -> void:
+	navigation_ready = false
+	if not navigation:
+		navigation = NavigationRegion3D.new()
+		add_child(navigation)
+	var mesh := NavigationMesh.new()
+	NavigationServer3D.map_set_cell_size(navigation.get_navigation_map(), 0.15)
+	NavigationServer3D.map_set_cell_height(navigation.get_navigation_map(), 0.1)
+	mesh.agent_radius = 0.45
+	mesh.agent_height = 1.8
+	mesh.agent_max_climb = 0.2
+	mesh.cell_size = 0.15
+	mesh.cell_height = 0.1
+	mesh.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_STATIC_COLLIDERS
+	mesh.geometry_source_geometry_mode = NavigationMesh.SOURCE_GEOMETRY_GROUPS_EXPLICIT
+	mesh.geometry_source_group_name = "navigation_geometry"
+	mesh.filter_baking_aabb = AABB(Vector3(-19, -0.5, -43), Vector3(38, 2.6, 50))
+	var source := NavigationMeshSourceGeometryData3D.new()
+	NavigationServer3D.parse_source_geometry_data(mesh, source, self)
+	NavigationServer3D.bake_from_source_geometry_data(mesh, source)
+	navigation.navigation_mesh = mesh
+	# The server applies the new region at the next physics synchronization.
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	navigation_ready = true
+
+func route(from: Vector3, to: Vector3) -> PackedVector3Array:
+	if not navigation_ready:
+		return PackedVector3Array()
+	var map := navigation.get_navigation_map()
+	var end := NavigationServer3D.map_get_closest_point(map, to)
+	if Vector2(end.x - to.x, end.z - to.z).length() > 0.8:
+		return PackedVector3Array()
+	var path := NavigationServer3D.map_get_path(map, from, end, true)
+	if path.is_empty() or path[path.size() - 1].distance_to(end) > 0.5:
+		return PackedVector3Array()
+	return path
 
 func build_room(room: Array) -> void:
 	var center: Vector3 = room[0]
@@ -72,6 +114,7 @@ func wall_piece(at: Vector3, direction: Vector3, width: float, height: float, el
 
 func box(at: Vector3, size: Vector3, color: Color) -> StaticBody3D:
 	var body := StaticBody3D.new()
+	body.add_to_group("navigation_geometry")
 	body.position = at
 	var mesh := MeshInstance3D.new()
 	var shape := BoxMesh.new()
