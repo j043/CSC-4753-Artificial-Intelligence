@@ -292,3 +292,6 @@ ok i just walked through the whole game and it went well! lets do less intermedi
 
 [29] September 25, 2026 | Commit M3 and begin M4
 lets commit this and then get started on m4!
+
+[30] September 26, 2026 | Approve both M4 endings, commit and begin M5
+m4 looks fantastic!!!! i love the two endings!! i played through both and they're both fun. lets commit this work, then move on to m5!

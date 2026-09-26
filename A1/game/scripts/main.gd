@@ -4,6 +4,8 @@ const Facility = preload("res://scripts/facility.gd")
 const Player = preload("res://scripts/player.gd")
 const NPC = preload("res://scripts/npc.gd")
 const Progression = preload("res://scripts/progression.gd")
+const Narrative = preload("res://scripts/narrative.gd")
+var narrative: Node
 var progress: Node
 var speaker: CharacterBody3D
 var dialogue_page := "root"
@@ -28,7 +30,7 @@ var tour := false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	for binding in [["walk_forward", KEY_W], ["walk_back", KEY_S], ["walk_left", KEY_A], ["walk_right", KEY_D], ["sprint", KEY_SHIFT], ["interact", KEY_E], ["flashlight", KEY_F], ["pause", KEY_ESCAPE]]:
+	for binding in [["walk_forward", KEY_W], ["walk_back", KEY_S], ["walk_left", KEY_A], ["walk_right", KEY_D], ["sprint", KEY_SHIFT], ["interact", KEY_E], ["flashlight", KEY_F], ["pause", KEY_ESCAPE], ["journal", KEY_J]]:
 		if not InputMap.has_action(binding[0]):
 			InputMap.add_action(binding[0])
 			var event := InputEventKey.new()
@@ -73,7 +75,7 @@ func _ready() -> void:
 	menu.add_theme_constant_override("separation", 14)
 	margin.add_child(menu)
 	show_menu()
-	print("Blackwell M3 ready")
+	print("Blackwell M4 ready")
 
 func label_at(offset: Vector2, size: int) -> Label:
 	var label := Label.new()
@@ -142,7 +144,7 @@ func show_menu() -> void:
 	notice.text = ""
 	notice_queue.clear()
 	notice_time = 0
-	clear_menu("BLACKWELL: LAST SHIFT", "M3 - complete objective skeleton\nWASD move / Mouse look / Shift sprint\nE interact or talk / F flashlight / Escape pause\nMeet Mara and Eli, restore power, isolate the chamber, and evacuate.")
+	clear_menu("BLACKWELL: LAST SHIFT", "M4 - containment and evacuation\nWASD move / Mouse look / Shift sprint\nE interact or talk / F flashlight / Escape pause\nMeet Mara and Eli, restore power, isolate the chamber, and evacuate.")
 	button("Start - initial lockdown", start.bind(false))
 	button("Facility tour - gates open", start.bind(true))
 	button("Quit", func(): get_tree().quit())
@@ -161,6 +163,9 @@ func start(open_gates: bool) -> void:
 	progress.app = self
 	world.add_child(progress)
 	world.progression = progress
+	narrative = Narrative.new()
+	narrative.app = self
+	world.add_child(narrative)
 	player.object_selected.connect(interact_object)
 	player.interacted.connect(show_notice)
 	player.npc_selected.connect(open_dialogue)
@@ -199,13 +204,29 @@ func pause_game() -> void:
 	mode = "pause"
 	get_tree().paused = true
 	clear_menu("PAUSED", "Simulation paused.\nWASD move / Shift sprint / E interact / F flashlight")
+	var volume_label := Label.new()
+	volume_label.text = "Master volume (0 = mute)"
+	menu.add_child(volume_label)
+	var volume := HSlider.new()
+	volume.min_value = 0
+	volume.max_value = 100
+	volume.value = AudioServer.get_bus_volume_linear(0) * 100
+	volume.value_changed.connect(func(value: float): AudioServer.set_bus_volume_linear(0, value / 100.0))
+	menu.add_child(volume)
 	button("Resume", resume)
+	if not narrative.checkpoint.is_empty():
+		button("Restart Checkpoint", retry_checkpoint)
 	button("Return to Menu", show_menu)
 	button("Quit", func(): get_tree().quit())
 
 func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("journal") and mode == "play" and not tour and progress.stage < 6:
+		show_journal()
+		get_viewport().set_input_as_handled()
 	if event.is_action_pressed("pause") and not event.is_echo():
-		if mode == "dialogue":
+		if mode in ["journal", "decision"]:
+			resume()
+		elif mode == "dialogue":
 			close_dialogue()
 		elif mode == "play":
 			pause_game()
@@ -320,26 +341,114 @@ func _process(delta: float) -> void:
 	if mode != "play" or not is_instance_valid(player):
 		return
 	hud.text = "%s\n%s\nF Flashlight: %s  |  E Interact  |  Esc Pause" % [world.area_name(player.position), "FACILITY TOUR - gates open" if tour else ("O%d/6: %s\n%s" % [mini(progress.stage, 6), progress.hint(), progress.readiness()]), "ON" if player.light.visible else "OFF"]
-	prompt.position.y = hud.position.y + hud.size.y + 12
 	var target: Object = player.interaction_target()
 	prompt.text = "[E] " + str(target.get_meta("prompt")) if target else ""
 	update_notice(delta)
 	if not tour:
-		progress.tick()
+		narrative.tick(delta)
+		if mode == "play":
+			progress.tick()
+		if progress.stage == 6:
+			hud.text += "\nEVACUATION: %03d seconds | Both survivors must board" % ceili(narrative.remaining)
+		else:
+			hud.text += "\nJ - Journal (%d/3)" % narrative.clues.size()
+	prompt.position.y = hud.position.y + hud.size.y + 12
 
 func interact_object(target: Object) -> void:
 	replace_interaction_feedback()
+	var id: String = target.get_meta("object_id", "")
+	if id in Narrative.CLUES and not tour:
+		if progress.stage >= 6:
+			show_notice("Evacuate now. The lift is west of security.")
+		else:
+			narrative.collect(id)
+		return
 	if tour:
 		show_notice("Facility tour: inspection only; no component collected. Choose Start - initial lockdown to play objectives." if target.get_meta("object_id", "") == "Maintenance workbench" else str(target.get_meta("message")))
 	else:
 		progress.interact(target)
 
 func show_success() -> void:
-	mode = "success"
+	show_outcome("EVACUATION COMPLETE", "You trusted the survivors. Isolation contained the entity, and all three of you reached the surface. The voice remains sealed below.", "success")
+
+func show_outcome(title: String, text: String, outcome := "ending") -> void:
+	mode = outcome
 	player.controls_enabled = false
 	get_tree().paused = true
 	notice.text = ""
 	notice_queue.clear()
-	clear_menu("EVACUATION COMPLETE", "You, Mara, and Eli escaped. The chamber remains isolated.\nM3 playable skeleton complete. Narrative choices and timed escape arrive in M4.")
+	narrative.stop_alarm()
+	clear_menu(title, text)
+	if not narrative.checkpoint.is_empty():
+		button("Retry Checkpoint", retry_checkpoint)
 	button("New Game", func(): show_menu(); start(false))
 	button("Return to Menu", show_menu)
+
+func show_decision() -> void:
+	mode = "decision"
+	player.controls_enabled = false
+	get_tree().paused = true
+	notice.hide()
+	clear_menu("CHAMBER CONTROL", "Intercom (Mara's voice): Reconnect. Let me out.\nMara Voss: That isn't me. Isolate the chamber.\nEli Ward: We're both ready. Reconnection bypasses containment.\n\nCheckpoint saved. Choose whom to trust.")
+	button("Trust survivors / ISOLATE", narrative.choose.bind("isolate"))
+	button("Trust intercom / RECONNECT", confirm_reconnect)
+	button("Back to facility", resume)
+
+func confirm_reconnect() -> void:
+	clear_menu("CONFIRM RECONNECTION", "The survivors warn that reconnection bypasses containment. Follow the intercom anyway?")
+	button("Reconnect anyway", narrative.choose.bind("reconnect"))
+	button("Back", show_decision)
+
+func show_journal(id := "") -> void:
+	mode = "journal"
+	player.controls_enabled = false
+	get_tree().paused = true
+	notice.hide()
+	clear_menu("FIELD NOTES", Narrative.CLUES[id] if id != "" else "Collected notes remain available here. Escape returns to the facility.")
+	for clue in narrative.clues:
+		button(clue, show_journal.bind(clue))
+	if narrative.clues.is_empty():
+		var empty := Label.new()
+		empty.text = "No notes collected. Look for labeled documents in the facility."
+		menu.add_child(empty)
+	button("Return to facility", resume)
+
+func retry_checkpoint() -> void:
+	if narrative.checkpoint.is_empty():
+		return
+	var saved: Dictionary = narrative.checkpoint.duplicate(true)
+	show_menu()
+	# Recreate the whole world with both permanent gates open. No old timers or callbacks survive.
+	start(true)
+	tour = false
+	world.tour = false
+	for child in world.get_children():
+		if child is Label3D:
+			child.text = child.text.replace("TOUR OPEN", "OPEN")
+	progress.stage = 5
+	progress.component = "consumed"
+	progress.met.assign(saved.met)
+	progress.completed.assign(saved.completed)
+	progress.pending.assign(saved.pending)
+	progress.active = saved.active
+	progress.line_index = saved.line_index
+	progress.warning_known = saved.warning
+	narrative.clues.assign(saved.clues)
+	narrative.fired.assign(saved.fired)
+	narrative.checkpoint = saved.duplicate(true)
+	player.position = saved.player
+	player.rotation = saved.yaw
+	player.camera.rotation = saved.pitch
+	player.light.visible = saved.flashlight
+	for i in 2:
+		var npc = world.npcs[i]
+		npc.position = saved.npcs[i].position
+		npc.rotation = saved.npcs[i].rotation
+		npc.destination = saved.npcs[i].destination
+		npc.state = "perform_task"
+		npc.task_id = "isolation"
+		npc.task_ready = true
+	for child in world.get_children():
+		if child.get_meta("object_id", "") == "Maintenance workbench":
+			child.set_meta("prompt", "Inspect empty component tray")
+	show_decision()

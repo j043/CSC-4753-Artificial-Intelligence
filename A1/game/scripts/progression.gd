@@ -69,13 +69,13 @@ func interact(target: Object) -> void:
 			if missing != "":
 				app.show_notice("Isolation unavailable: " + missing)
 			elif stage == 5:
-				stage = 6
-				app.show_notice("Chamber isolated. Mara and Eli are heading to the lift. Join them.")
-				for npc in app.world.npcs:
-					npc.command("evacuate")
+				app.narrative.save_checkpoint()
+				app.show_decision()
 		"Lift call panel":
 			if stage != 6:
 				app.show_notice("Lift unavailable. " + hint())
+			elif app.narrative.remaining <= 0:
+				app.show_outcome("EVACUATION FAILED", "The evacuation window closed. Retry the checkpoint.")
 			elif not ready_for(app.world.npcs[0], "evacuate") or not ready_for(app.world.npcs[1], "evacuate"):
 				app.show_notice("Waiting for Mara and Eli to board. Clear their route to the lift.")
 			else:
@@ -115,7 +115,7 @@ func tick() -> void:
 		queue_exchange("warning")
 	if stage == 6 and app.world.navigation_ready:
 		for npc in app.world.npcs:
-			if npc.state == "wait":
+			if npc.state == "wait" or npc.task_id != "evacuate":
 				npc.command("evacuate")
 	if app.mode != "play" or not app.notice.text.is_empty() or not app.notice_queue.is_empty():
 		return

@@ -43,6 +43,9 @@ func _ready() -> void:
 	sign_text("EXPERIMENTAL CHAMBER / SEALED", Vector3(0, 2.5, -41.4), 0, 25)
 	prop(Vector3(-15.5, 0.9, -2), Vector3(1, 1.8, 1), "Lift call panel", "Isolate the chamber, then board with both survivors to evacuate.")
 	box(Vector3(-16, 0.04, 1), Vector3(3, 0.08, 4), Color(0.6, 0.54, 0.27))
+	prop(Vector3(3.7, 0.7, -3), Vector3(0.7, 1.4, 0.4), "Voice warning", "")
+	prop(Vector3(9, 0.7, -15), Vector3(0.7, 1.4, 0.4), "Incident note", "")
+	prop(Vector3(-4, 0.7, -39), Vector3(0.7, 1.4, 0.4), "Isolation protocol", "")
 	build_navigation()
 
 func build_navigation() -> void:

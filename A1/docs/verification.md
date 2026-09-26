@@ -164,3 +164,17 @@ Meeting both survivors now unlocks component retrieval immediately instead of wa
 ### Playthrough feedback - September 25, 2026
 
 The user reports completing the entire current game successfully. This is manual M3 flow evidence, not a timed new-player acceptance run. Reduced subtitle hold time to three seconds after typing. Shortened command acknowledgements, removed redundant repair/access arrival lines and lift boarding chatter, and retained isolation readiness, actionable blockage feedback, objective updates, and the three story exchanges. One isolation message explicitly announces both survivors moving to the lift.
+
+## M4 - September 25, 2026
+
+Implemented evidence: `scripts/narrative.gd` owns clue collection, run-local event flags, figure/lighting timing, generated alarm, final decisions, countdown, and a deep value checkpoint. `main.gd` owns decision confirmation, journal, endings/failure, pause volume/retry, and fresh-world restoration. `progression.gd` revalidates readiness and rejects zero-time lift success. New clue props are in `facility.gd`.
+
+Verification: 29 M1, 46 M2, 29 updated M3, and 37 M4 checks pass. M3 still exercises real NPC travel through the complete route. M4 tests both decision branches, confirmation, note deduplication, occupied one-shot events, disappearance/restoration, three repeated retries, timer freeze/timeout, restored transforms/readiness/items/gates/notes/events, immediate retry before navigation synchronization, master-bus mute, zero-time lift race, and new-game reset. M4 fixtures arrange the pre-decision state directly; they do not replace a human full playthrough.
+
+Rendered journal/decision/window-figure screens inspected at 1280x720 and escape HUD at 1920x1080; UI is readable. Basic figure is a graybox silhouette; presentation polish remains M5. Master volume is available in pause and affects the generated alarm. Audible quality/loudness, suspense, countdown fairness, both endings via physical controls, clue targeting, and performance still need user review.
+
+Environment diagnostics: certificate-store warning persists; sandboxed rendering reported shader-cache write failures. Fast headless shutdown initially reported audio playback resources pending disposal; tests now give the mixer time to release stopped buffers. No GDScript errors remain in the passing checks. No complete acceptance criterion is inferred solely from these fixtures.
+
+M4 Windows export completed; copied EXE/PCK to the separate ignored `builds/m4-portability-check/` directory and verified headless startup exits 0 with "Blackwell M4 ready". Exported gameplay and second-machine behavior remain untested. The final accelerated headless tests still intermittently report two audio-resource instances at engine shutdown despite stopping/detaching playback; this remains an engine/audio teardown diagnostic to revisit, not a cleared warning.
+
+September 26, 2026: User reports playing both M4 endings successfully and approves the work. This adds manual ending-flow evidence; performance, timing, and exhaustive retry checks remain separate.

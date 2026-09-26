@@ -13,3 +13,7 @@ All graybox room geometry, machinery shapes, colors, signs, HUD, menus, and ligh
 ## M2 assets
 
 Mara/Eli placeholder meshes, uniform/tool/badge details, colors, name labels and dialogue are project-authored with Godot primitives and built-in fonts. No third-party models, textures, audio, runtime service or AI API were added. NPC geometry is defined in `game/scripts/npc.gd`.
+
+## M4 assets
+
+Journal text, decision/endings, window silhouette and lighting events are project-authored. The containment alarm is an original synthesized sine pulse generated in `scripts/narrative.gd`; it uses no external audio file or third-party recording. No new external assets or runtime services were added.

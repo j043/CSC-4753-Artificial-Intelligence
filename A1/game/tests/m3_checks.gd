@@ -97,7 +97,9 @@ func run() -> void:
 	mara.command("isolation")
 	await frames(10)
 	p.interact(console)
-	check(p.stage == 6, "Reassignment permits cooperative isolation")
+	check(app.mode == "decision", "Reassignment permits final decision")
+	app.narrative.choose("isolate")
+	check(p.stage == 6, "Survivor choice commits cooperative isolation")
 	p.interact(lift)
 	check(p.stage == 6, "Lift waits for survivors")
 	var before: Vector3 = mara.position
@@ -118,4 +120,6 @@ func run() -> void:
 	print("M3: %d checks, %d failures" % [checks, failures])
 	app.show_menu()
 	await frames(2)
+	# Let the audio mixer release stopped playback buffers before engine teardown.
+	await create_timer(0.2).timeout
 	quit(1 if failures else 0)

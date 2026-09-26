@@ -42,3 +42,14 @@ Add exact routes, dialogue options, and build ID when these behaviors exist.
 - Reassign, isolate, and return to the lift with both survivors. Activate the panel for success.
 - Start a new game and confirm initial gates, component, objectives, and NPCs reset.
 - M4 decision/countdown/checkpoint and alternate ending are not in this skeleton.
+
+## M4 demonstration
+
+- Read one optional note in security, maintenance, and observation; press J to reread.
+- Restore power/access, enter coolant for lights and imitation responses, then approach the observation window facing north for the silhouette.
+- Assign both stations and activate the console. Show the saved checkpoint and conflicting advice.
+- Choose reconnect, confirm, and read the breach consequence.
+- Retry, choose isolate, inspect the countdown/alarm, pause and verify timer freeze; test volume/mute.
+- Evacuate with both NPCs and activate the lift for the successful containment ending.
+- Retry again, deliberately time out, and retry from failure. Verify fresh timer, ready NPCs, open gates, and retained notes.
+- New Game must clear notes, events, checkpoint, objectives, and NPC commands.

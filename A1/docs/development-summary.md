@@ -64,3 +64,9 @@ Meeting both survivors now unlocks component retrieval immediately instead of wa
 ### Playthrough feedback - September 25, 2026
 
 The user reports completing the entire current game successfully. This is manual M3 flow evidence, not a timed new-player acceptance run. Reduced subtitle hold time to three seconds after typing. Shortened command acknowledgements, removed redundant repair/access arrival lines and lift boarding chatter, and retained isolation readiness, actionable blockage feedback, objective updates, and the three story exchanges. One isolation message explicitly announces both survivors moving to the lift.
+
+## M4 - narrative and end states
+
+Committed the user-approved M3 slice as cdfeb28, then added three optional journal notes, a window silhouette, occupied-gallery lighting failure, the existing imitation exchange, and a generated containment alarm. The console now saves an in-memory checkpoint and offers survivors/isolate versus intercom/reconnect, with explicit confirmation of reconnection. Isolation starts a provisional 120-second countdown and NPC evacuation; reconnect ends in breach. Success requires everyone aboard before zero; timeout gives retryable failure.
+
+Retries recreate the entire world from value data, avoiding live-node snapshots and old alarm/task callbacks. Tests exposed a navigation synchronization edge case after immediate retry; evacuation assignment now waits/retries until the rebuilt map is ready. Audio follows the Master bus with a pause-menu volume control. Preserved the user's three-second subtitles, direct NPC choices, and latest-interaction feedback. M4 changes are uncommitted pending playtest; M5 presentation/persistent settings and M6 full acceptance remain.
