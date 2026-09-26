@@ -39,8 +39,9 @@ func choose(choice: String) -> void:
 		remaining = 120.0
 		fired.append("alarm")
 		start_alarm()
+		app.shadow.start_chase()
 		app.resume()
-		app.show_notice("CONTAINMENT ALARM: 120 seconds. Mara and Eli are heading to the lift. Join them.")
+		app.show_notice("Mara Voss: It is coming! Hold Shift to sprint to the lift. You have six seconds before it moves.")
 		if app.world.navigation_ready:
 			for npc in app.world.npcs:
 				npc.command("evacuate")

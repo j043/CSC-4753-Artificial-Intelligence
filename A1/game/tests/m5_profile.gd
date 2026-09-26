@@ -20,6 +20,8 @@ func run() -> void:
 			app.tour = false
 			app.progress.stage = 6
 			app.narrative.start_alarm()
+			app.shadow.start_chase()
+			app.shadow.grace = 2
 			for npc in app.world.npcs:
 				npc.command("evacuate")
 		for i in 60: await process_frame

@@ -107,6 +107,8 @@ func run() -> void:
 	await frames(30)
 	check(mara.position == before, "Pause freezes evacuation")
 	app.resume()
+	# Flow fixture waits inside the safe lift; chase navigation has its own tests.
+	app.player.position = Vector3(-13, 0.05, -2)
 	await frames(1500)
 	check(p.ready_for(mara, "evacuate") and p.ready_for(eli, "evacuate"), "Both NPCs navigate entire evacuation route")
 	app.player.position = Vector3(-13, 0.05, -2)

@@ -11,6 +11,8 @@ const TitleLogo = preload("res://scripts/title_logo.gd")
 var preferences = Preferences.new()
 var settings_origin := "menu"
 var sounds: Node
+const Shadow = preload("res://scripts/shadow.gd")
+var shadow: CharacterBody3D
 var narrative: Node
 var progress: Node
 var speaker: CharacterBody3D
@@ -181,6 +183,9 @@ func start(open_gates: bool) -> void:
 	narrative = Narrative.new()
 	narrative.app = self
 	world.add_child(narrative)
+	shadow = Shadow.new()
+	shadow.app = self
+	world.add_child(shadow)
 	player.object_selected.connect(interact_object)
 	player.interacted.connect(show_notice)
 	player.npc_selected.connect(open_dialogue)
@@ -371,7 +376,7 @@ func _process(delta: float) -> void:
 			if progress.stage != old_stage:
 				sounds.cue("objective")
 		if progress.stage == 6:
-			hud.text += "\nEVACUATION: %03d seconds | Both survivors must board" % ceili(narrative.remaining)
+			hud.text += "\nEVACUATION: %03d seconds | %s" % [ceili(narrative.remaining), "LIFT SAFE - wait for both survivors" if shadow.in_lift() else "SHADOW PURSUIT - Shift to sprint to the lift"]
 		else:
 			hud.text += "\nJ - Journal (%d/3)" % narrative.clues.size()
 	prompt.position.y = hud.position.y + hud.size.y + 12

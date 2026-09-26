@@ -75,6 +75,8 @@ func interact(target: Object) -> void:
 		"Lift call panel":
 			if stage != 6:
 				app.show_notice("Lift unavailable. " + hint())
+			elif app.shadow.caught():
+				app.show_outcome("YOU DIED", "The shadow caught you. Retry the checkpoint and sprint to the lift.")
 			elif app.narrative.remaining <= 0:
 				app.show_outcome("EVACUATION FAILED", "The evacuation window closed. Retry the checkpoint.")
 			elif not ready_for(app.world.npcs[0], "evacuate") or not ready_for(app.world.npcs[1], "evacuate"):
