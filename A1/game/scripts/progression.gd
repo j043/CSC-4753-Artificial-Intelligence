@@ -59,6 +59,7 @@ func interact(target: Object) -> void:
 		"Maintenance workbench":
 			if stage == 2 and component == "available":
 				component = "held"
+				app.world.set_component_visible(false)
 				stage = 3
 				target.set_meta("prompt", "Inspect empty component tray")
 				app.show_notice("Replacement component collected. " + hint())

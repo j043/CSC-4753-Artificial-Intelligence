@@ -4,6 +4,7 @@ const Facility = preload("res://scripts/facility.gd")
 const Player = preload("res://scripts/player.gd")
 const NPC = preload("res://scripts/npc.gd")
 const Progression = preload("res://scripts/progression.gd")
+const TitleLogo = preload("res://scripts/title_logo.gd")
 const Narrative = preload("res://scripts/narrative.gd")
 var narrative: Node
 var progress: Node
@@ -93,10 +94,13 @@ func clear_menu(title: String, description: String) -> void:
 	for child in menu.get_children():
 		menu.remove_child(child)
 		child.queue_free()
-	var heading := Label.new()
-	heading.text = title
-	heading.add_theme_font_size_override("font_size", 32)
-	menu.add_child(heading)
+	if mode == "menu":
+		menu.add_child(TitleLogo.new())
+	else:
+		var heading := Label.new()
+		heading.text = title
+		heading.add_theme_font_size_override("font_size", 32)
+		menu.add_child(heading)
 	var detail := Label.new()
 	detail.text = description
 	detail.custom_minimum_size.x = 1000 if mode == "dialogue" else 560
@@ -427,6 +431,7 @@ func retry_checkpoint() -> void:
 			child.text = child.text.replace("TOUR OPEN", "OPEN")
 	progress.stage = 5
 	progress.component = "consumed"
+	world.set_component_visible(false)
 	progress.met.assign(saved.met)
 	progress.completed.assign(saved.completed)
 	progress.pending.assign(saved.pending)

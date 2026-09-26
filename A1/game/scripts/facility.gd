@@ -1,5 +1,6 @@
 extends Node3D
 ## Deterministic graybox: 12 m rooms, 3 m openings, no moving crush hazards.
+const IndustrialArt = preload("res://scripts/industrial_art.gd")
 var tour := false
 var progression: Node
 var gates: Array[StaticBody3D] = []
@@ -15,6 +16,8 @@ const ROOMS := [
 	[Vector3(-12, 0, 0), "06  EVACUATION LIFT", "SECURITY / EAST", Color(0.37, 0.37, 0.25)],
 ]
 const WALL := Color(0.26, 0.29, 0.32)
+const AMBIENT_ENERGY := 0.07
+const ROOM_LIGHT_ENERGY := 0.22
 
 func _ready() -> void:
 	name = "Facility"
@@ -24,7 +27,7 @@ func _ready() -> void:
 	settings.background_color = Color(0.025, 0.035, 0.045)
 	settings.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	settings.ambient_light_color = Color(0.65, 0.72, 0.8)
-	settings.ambient_light_energy = 0.55
+	settings.ambient_light_energy = AMBIENT_ENERGY
 	environment.environment = settings
 	add_child(environment)
 	for room in ROOMS:
@@ -35,17 +38,26 @@ func _ready() -> void:
 	prop(Vector3(-3.6, 0.8, -14.5), Vector3(2.5, 1.6, 1.2), "Control console", "Maintenance workshop is east. Mara repairs power; Eli authorizes access here.")
 	prop(Vector3(15, 0.55, -14), Vector3(3, 1.1, 1.4), "Maintenance workbench", "Replacement component tray and emergency-power repair station. Ask Mara to repair after collection.")
 	for z in [-26.5, -24.0, -21.5]:
-		box(Vector3(-4, 1.4, z), Vector3(1.5, 2.8, 1.5), Color(0.16, 0.4, 0.46))
+		var tank := box(Vector3(-4, 1.4, z), Vector3(1.5, 2.8, 1.5), Color(0.16, 0.4, 0.46))
+		tank.get_child(0).hide()
 	prop(Vector3(3.7, 0.65, -36), Vector3(1.7, 1.3, 2.5), "Chamber control console", "Isolation requires Mara at the maintenance panel and Eli at the security override.")
-	sign_text("MARA / MAINTENANCE PANEL", Vector3(-2, 2.6, -37), 0, 22)
-	sign_text("ELI / SECURITY OVERRIDE", Vector3(2, 2.6, -39), 0, 22)
-	box(Vector3(0, 1.8, -41.6), Vector3(7, 2.5, 0.2), Color(0.08, 0.17, 0.22))
-	sign_text("EXPERIMENTAL CHAMBER / SEALED", Vector3(0, 2.5, -41.4), 0, 25)
+	sign_text("MARA / MAINTENANCE PANEL", Vector3(-2, 2.2, -37), 0, 16)
+	sign_text("ELI / SECURITY OVERRIDE", Vector3(2, 2.2, -38.5), 0, 16)
+	var glass := box(Vector3(0, 1.8, -41.6), Vector3(7, 2.5, 0.2), Color(0.08, 0.17, 0.22))
+	var glass_material := StandardMaterial3D.new()
+	glass_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	glass_material.albedo_color = Color(0.17, 0.3, 0.34, 0.13)
+	glass_material.roughness = 0.2
+	glass.get_child(0).material_override = glass_material
+	sign_text("EXPERIMENTAL CHAMBER / SEALED", Vector3(0, 3.32, -41.2), 0, 25)
 	prop(Vector3(-15.5, 0.9, -2), Vector3(1, 1.8, 1), "Lift call panel", "Isolate the chamber, then board with both survivors to evacuate.")
 	box(Vector3(-16, 0.04, 1), Vector3(3, 0.08, 4), Color(0.6, 0.54, 0.27))
-	prop(Vector3(3.7, 0.7, -3), Vector3(0.7, 1.4, 0.4), "Voice warning", "")
-	prop(Vector3(9, 0.7, -15), Vector3(0.7, 1.4, 0.4), "Incident note", "")
-	prop(Vector3(-4, 0.7, -39), Vector3(0.7, 1.4, 0.4), "Isolation protocol", "")
+	journal(Vector3(3.7, 0.06, -3), "Voice warning", -0.25)
+	journal(Vector3(9, 0.06, -15), "Incident note", 0.4)
+	journal(Vector3(-4, 0.06, -39), "Isolation protocol", -0.5)
+	var art := IndustrialArt.new()
+	art.facility = self
+	add_child(art)
 	build_navigation()
 
 func build_navigation() -> void:
@@ -88,7 +100,7 @@ func route(from: Vector3, to: Vector3) -> PackedVector3Array:
 
 func build_room(room: Array) -> void:
 	var center: Vector3 = room[0]
-	box(center + Vector3(0, -0.15, 0), Vector3(12, 0.3, 12), room[3])
+	box(center + Vector3(0, -0.15, 0), Vector3(12, 0.3, 12), Color(room[3]).darkened(0.35))
 	box(center + Vector3(0, 3.65, 0), Vector3(12, 0.3, 12), WALL)
 	for direction in [Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT]:
 		var neighbor := false
@@ -101,16 +113,25 @@ func build_room(room: Array) -> void:
 			for side in [-1, 1]:
 				wall_piece(wall_center + across * 3.75 * side, direction, 4.5, 3.5, 1.75)
 			wall_piece(wall_center, direction, 3, 0.7, 3.15)
+		elif center.z == -36 and direction == Vector3.FORWARD:
+			for side in [-1, 1]:
+				wall_piece(wall_center + across * 4.8 * side, direction, 2.4, 3.5, 1.75)
+			wall_piece(wall_center, direction, 7.2, 0.5, 0.25)
+			wall_piece(wall_center, direction, 7.2, 0.4, 3.3)
 		else:
 			wall_piece(wall_center, direction, 12, 3.5, 1.75)
 	# Wall signs stay out of the central sightline through successive doorways.
-	sign_text(room[1], center + Vector3(-3.65, 2.65, -5.85), 0, 27)
-	sign_text(room[2], center + Vector3(-3.65, 2.2, -5.85), 0, 17)
-	sign_text(room[1], center + Vector3(3.65, 2.65, 5.85), PI, 27)
+	if center.z == -36:
+		sign_text(room[1], center + Vector3(-5.65, 2.65, 0), PI / 2, 27)
+		sign_text(room[2], center + Vector3(-5.65, 2.2, 0), PI / 2, 17)
+	else:
+		sign_text(room[1], center + Vector3(-3.65, 2.65, -5.65), 0, 27)
+		sign_text(room[2], center + Vector3(-3.65, 2.2, -5.65), 0, 17)
+	sign_text(room[1], center + Vector3(3.65, 2.65, 5.65), PI, 27)
 	var light := OmniLight3D.new()
 	light.position = center + Vector3(0, 3.1, 0)
-	light.omni_range = 9
-	light.light_energy = 1.1
+	light.omni_range = 6
+	light.light_energy = ROOM_LIGHT_ENERGY
 	light.light_color = Color(0.75, 0.83, 0.9)
 	add_child(light)
 
@@ -138,6 +159,14 @@ func box(at: Vector3, size: Vector3, color: Color) -> StaticBody3D:
 	body.add_child(collision)
 	add_child(body)
 	return body
+
+func journal(at: Vector3, title: String, yaw: float) -> void:
+	var body := box(at, Vector3(0.34, 0.10, 0.46), Color("463b32"))
+	body.rotation.y = yaw
+	body.get_child(0).hide()
+	body.set_meta("prompt", "Read " + title)
+	body.set_meta("message", "")
+	body.set_meta("object_id", title)
 
 func prop(at: Vector3, size: Vector3, title: String, message: String) -> void:
 	var body := box(at, size, Color(0.16, 0.20, 0.23))
@@ -186,3 +215,10 @@ func unlock_gate(index: int) -> void:
 		if child is Label3D and child.text.begins_with("GATE " + ("A" if index == 0 else "B")):
 			child.text = child.text.replace("LOCKED", "OPEN")
 	build_navigation()
+
+func set_component_visible(value: bool) -> void:
+	for child in get_children():
+		if child is IndustrialArt:
+			for visual in child.get_children():
+				if visual.has_meta("component_visual"):
+					visual.visible = value

@@ -1,6 +1,8 @@
 extends CharacterBody3D
 ## Authored local state machine. No relocation or objective side effects.
 signal announced(message: String)
+const HumanVisual = preload("res://scripts/npc_visual.gd")
+var human: Node3D
 var person := "Mara Voss"
 var engineer := true
 var player: CharacterBody3D
@@ -33,34 +35,17 @@ func _ready() -> void:
 	collider.shape = capsule
 	collider.position.y = 0.9
 	add_child(collider)
-	var uniform := Color(0.72, 0.43, 0.13) if engineer else Color(0.16, 0.3, 0.58)
-	part(Vector3(0, 1.12, 0), Vector3(0.62 if engineer else 0.78, 0.7, 0.36), uniform)
-	part(Vector3(0, 1.67, 0), Vector3(0.38, 0.4, 0.36), Color(0.67, 0.51, 0.4))
-	part(Vector3(0, 1.91, 0), Vector3(0.48, 0.12, 0.44), uniform)
-	for x in [-0.18, 0.18]:
-		part(Vector3(x, 0.4, 0), Vector3(0.23, 0.8, 0.3), Color(0.14, 0.17, 0.2))
-	if engineer:
-		part(Vector3(0.42, 0.85, 0), Vector3(0.24, 0.4, 0.4), Color(0.3, 0.23, 0.12))
-	else:
-		part(Vector3(-0.19, 1.25, -0.2), Vector3(0.12, 0.19, 0.06), Color(0.85, 0.8, 0.45))
+	human = HumanVisual.new()
+	human.engineer = engineer
+	human.rotation.y = PI
+	add_child(human)
 	status = Label3D.new()
 	status.position.y = 2.2
 	status.font_size = 27
-	status.pixel_size = 0.006
+	status.pixel_size = 0.0035
 	status.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	add_child(status)
 	progress_origin = position
-
-func part(at: Vector3, size: Vector3, color: Color) -> void:
-	var visual := MeshInstance3D.new()
-	var mesh := BoxMesh.new()
-	mesh.size = size
-	visual.mesh = mesh
-	visual.position = at
-	var material := StandardMaterial3D.new()
-	material.albedo_color = color
-	visual.material_override = material
-	add_child(visual)
 
 func say(text: String) -> String:
 	var line := person + ": " + text
@@ -129,7 +114,15 @@ func follow_target() -> Vector3:
 	return follow_anchor
 
 func _physics_process(delta: float) -> void:
-	status.text = person + " / " + ("talking" if talking else state.replace("_", " "))
+	human.animate(delta, Vector2(velocity.x, velocity.z).length(), state == "perform_task" and task_id != "evacuate")
+	var facing: Vector3 = player.position - position if talking else velocity
+	facing.y = 0
+	if facing.length() > 0.1:
+		human.rotation.y = lerp_angle(human.rotation.y, atan2(-facing.x, -facing.z), minf(delta * 8, 1))
+	var activity: String = {"idle": "Available", "wait": "Waiting", "follow": "Following", "travel_to_task": "Moving to station", "perform_task": "Ready"}.get(state, "Available")
+	if task_id == "evacuate":
+		activity = "Boarded" if task_ready else "Evacuating"
+	status.text = person + " / " + ("Talking" if talking else activity)
 	if talking or state in ["idle", "wait", "perform_task"]:
 		velocity = Vector3.ZERO
 		return

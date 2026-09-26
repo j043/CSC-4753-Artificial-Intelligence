@@ -31,6 +31,8 @@ func _ready() -> void:
 	light.spot_range = 18
 	light.spot_angle = 34
 	light.shadow_enabled = true
+	light.shadow_bias = 0.15
+	light.shadow_normal_bias = 1.5
 	camera.add_child(light)
 	ray = RayCast3D.new()
 	ray.collision_mask = 3

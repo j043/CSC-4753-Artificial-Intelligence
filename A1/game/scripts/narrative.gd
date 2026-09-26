@@ -75,11 +75,11 @@ func tick(delta: float) -> void:
 	if app.progress.stage >= 4 and at.z < -20 and at.z > -29 and "lights" not in fired:
 		fired.append("lights")
 		light_time = 2.5
-		set_gallery_lights(0.08)
+		set_gallery_lights(0.015)
 	if light_time > 0:
 		light_time = maxf(0, light_time - delta)
 		if light_time == 0:
-			set_gallery_lights(1.1)
+			set_gallery_lights(app.world.ROOM_LIGHT_ENERGY)
 	if app.progress.stage >= 5 and at.z < -33 and "figure" not in fired:
 		# Trigger only when the window is in front of the player.
 		var toward: Vector3 = Vector3(0, 1.6, -41.3) - app.player.camera.global_position
