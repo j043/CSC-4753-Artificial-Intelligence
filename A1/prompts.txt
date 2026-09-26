@@ -295,3 +295,28 @@ lets commit this and then get started on m4!
 
 [30] September 26, 2026 | Approve both M4 endings, commit and begin M5
 m4 looks fantastic!!!! i love the two endings!! i played through both and they're both fun. lets commit this work, then move on to m5!
+
+[31] September 26, 2026 | Professor platform assumption
+not sure but assuming windows
+
+[32] September 26, 2026 | Random shadow sightings and lethal evacuation chase
+it looks great! lets do two things. first, i realy loved the creepy shadow that appears in the chamber during isolation, but i think it would be cool if it shows up randomly during the rest of the game, and then chases you to the lift. if it catches you before you reach the lift, you die
+
+[33] September 26, 2026 | Facility and NPC graphics request
+i would love you to spend some time really working on the graphics! the lighting is great, but i want to make the game actually look like youre in a nuclear facility, and the npcs look more like people
+
+[34] September 26, 2026 | Darker game and ground-level journal books
+hi codex, im back!! lets continue thte work for m4. can we make the entire game darker, so that you rely more on the flashlight? lets also make the journals little books on the ground instead of big rectangles
+
+[35] September 26, 2026 | Title-screen logo and Mara long hair
+yayy! looks fantastic. can we give the title screen a cool logo for the game? and can we give mara long hair 
+
+[36] September 26, 2026 | Reshape oval-based characters
+this looks really fun lol is there any way we can build these shapes without using all ovals? 
+[Attachment: user supplied a screenshot of Mara viewed from behind, showing oval hair and body shapes.]
+
+[37] September 26, 2026 | Lock maintenance until introductions and isolate picked-up journal view
+can the maintence room be closed until you speak to mara and eli? and can we remove the ability to see other journals when you pick one up?
+
+[38] September 26, 2026 | Commit progress in focused chunks
+this looks great. ill be back to finish this up. lets commit this in a few focused chunks! 

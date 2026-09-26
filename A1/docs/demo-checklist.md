@@ -53,3 +53,27 @@ Add exact routes, dialogue options, and build ID when these behaviors exist.
 - Evacuate with both NPCs and activate the lift for the successful containment ending.
 - Retry again, deliberately time out, and retry from failure. Verify fresh timer, ready NPCs, open gates, and retained notes.
 - New Game must clear notes, events, checkpoint, objectives, and NPC commands.
+
+## M5 checks
+
+- Open Settings from main menu and pause. Adjust sensitivity, volume/mute, brightness, Low quality, and resolution. Restart the executable and confirm persistence.
+- Pause during NPC dialogue, open Settings, return, then Resume. Confirm dialogue/input mode is preserved.
+- During evacuation open Settings and confirm countdown stays frozen.
+- Listen for quiet machinery hum, gate cue, objective cue, and alarm; confirm mute silences all.
+- Extract the Windows playtest ZIP to a separate folder and launch with the included PCK and license notices.
+
+## Shadow / art playtest
+
+- Explore while watching corridors for brief random silhouettes; they cannot kill before isolation.
+- Inspect new NPC faces/clothing/animation, instruments, coolant machinery, workshop, and reactor view.
+- Isolate, sprint to the lift, and wait safely for survivors.
+- Retry and deliberately let the shadow catch you; retry from YOU DIED. Pause mid-chase and verify it stops.
+- Reconnect for the alternate ending; verify no pursuit starts.
+
+## Latest presentation / access checks
+
+- Compare flashlight on/off; adjust brightness if needed for the target display.
+- Check the title logo and Mara/Eli models, including Mara's long hair.
+- Try entering maintenance before introductions, after one introduction, and after speaking to both survivors. Repeat in the opposite order on a new game.
+- Read two floor books: each pickup must display only that book. Press J separately to browse collected notes.
+- Refresh the final submission archive from the latest Windows EXE/PCK; the older standalone M5 ZIP does not contain these follow-ups.

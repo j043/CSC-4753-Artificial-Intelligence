@@ -178,3 +178,76 @@ Environment diagnostics: certificate-store warning persists; sandboxed rendering
 M4 Windows export completed; copied EXE/PCK to the separate ignored `builds/m4-portability-check/` directory and verified headless startup exits 0 with "Blackwell M4 ready". Exported gameplay and second-machine behavior remain untested. The final accelerated headless tests still intermittently report two audio-resource instances at engine shutdown despite stopping/detaching playback; this remains an engine/audio teardown diagnostic to revisit, not a cleared warning.
 
 September 26, 2026: User reports playing both M4 endings successfully and approves the work. This adds manual ending-flow evidence; performance, timing, and exhaustive retry checks remain separate.
+
+## M5 verification - September 26, 2026
+
+Implemented: persistent `user://settings.cfg` preferences (`scripts/settings.gd`), main/pause settings menus, mouse sensitivity, Master volume/mute, ambient brightness, dynamic-shadow Low preset, and three window resolutions. New games/checkpoints retain preferences. Settings return correctly to pause and any preserved NPC conversation. New `soundscape.gd` provides original ambient hum and gate/objective cues. NPC labels now show player-facing activity names.
+
+All 152 automated checks pass (M1 29 / M2 46 / M3 29 / M4 37 / M5 11). M5 tests use a separate ignored settings file to verify saved/reloaded preferences, application to new runs, brightness/shadows, Master mute, pause/dialogue input restoration, frozen NPC/countdown state, and story reset independent of settings. Existing certificate-store and accelerated audio-teardown warnings persist; no passing run reports GDScript errors. The rendered run has sandbox shader-cache write diagnostics. These are recorded rather than called clean engine logs.
+
+Rendered Settings screens inspected at 1280x720 and 1920x1080: controls and Back fit; no camera motion effects are implemented. License notices extracted from the actual engine, with project-authored asset provenance recorded in CREDITS. Windows x86_64 remains the user's assumed professor target, not confirmed hardware/OS compatibility.
+
+Performance method: three seconds per location after 60 warmup frames, measuring intervals between rendered frame-post-draw signals, VSync off, Low/720p, flashlight enabled; escape includes moving NPCs and alarm. These short engine render-loop samples are not a GPU-isolated benchmark, whole-game minimum, or guarantee for other computers. They support the target only for sampled conditions. Headless correctness tests are not FPS evidence.
+
+```text
+Godot 4.7.2-stable (official)
+CPU: 12th Gen Intel(R) Core(TM) i7-12650H
+GPU: NVIDIA GeForce RTX 3050 Ti Laptop GPU
+Memory: { "physical": 34011602944, "free": 22314573824, "available": 36159086592, "stack": 8388608 }
+OS: Windows
+Low preset, 1280x720, Compatibility, VSync disabled. Three-second rendered-frame samples per location; not full-playthrough performance.
+security: average 1287.0 FPS; p95 1.03 ms; worst 2.07 ms
+maintenance: average 1408.0 FPS; p95 0.99 ms; worst 1.79 ms
+observation: average 1561.5 FPS; p95 0.91 ms; worst 2.10 ms
+escape: average 976.3 FPS; p95 1.42 ms; worst 2.16 ms
+```
+
+Pending: user M5 settings/audio playtest, longer real-route profiling, first-time-player duration (15-25 minutes remains unverified), second computer if available, and M6 final source/export ZIP audit.
+
+M5 Windows release exported successfully. Created `builds/Blackwell-Windows-M5.zip` containing EXE, PCK, launch/control/settings README, and engine/component licenses. ZIP CRC check passed; extracted to separate `builds/m5-extracted-check/` and launched headless: exit 0, "Blackwell M5 ready". This verifies packaged startup, not a second-machine or exported full-playthrough test. The final source-and-deliverables ZIP remains M6.
+
+## Requested shadow chase and graphics pass - September 26, 2026
+
+New behavior: brief nonlethal sightings at randomly selected visible, reachable anchors during normal exploration. Timers stop outside active gameplay. Isolation starts a six-second grace period, then a 4.1 m/s navigation/collision-aware pursuit; normal walk is 3.4 m/s and sprint is 5.6 m/s. Capture within 0.9 m requires an unobstructed line to the player. The lift interior is safe while waiting for NPCs. Death exposes the existing checkpoint retry; reconnect does not start the chase. Retry/new game recreate the shadow controller with no stale pursuit or sightings.
+
+All 167 automated checks pass: prior 152 plus 15 dedicated checks covering harmless sightings, visibility/lifetime, pause, closed gates, grace, actual corridor traversal and capture, death retry, a full evacuation using normal sprint input, lift safety, leaving safety, reconnect, and new-game reset. The M3 general progression fixture now waits at the lift; the separate chase fixture explicitly performs the moving-player escape. Difficulty and natural random-sighting frequency still need user feedback.
+
+Graphics: original industrial dressing, an actual reactor view through sealed glass, detailed instruments/coolant/workbench/clues, and stylized human NPCs with faces, equipment, facing, gait, and work poses. Decorative geometry stays off navigation; original collision/interaction tests pass. The observation window still physically seals the chamber. Component decoration hides after collection/retry. Reduced shadow artifacts by retaining non-shadowed room lights and reserving Standard's dynamic shadow for the flashlight. Rendered screenshots inspected for security/NPCs, control, coolant, workshop, and reactor; art is stylized, not photorealistic.
+
+Post-art performance, same short-sample method and limitations as M5 (escape sample includes shadow movement):
+
+```text
+Godot 4.7.2-stable (official)
+CPU: 12th Gen Intel(R) Core(TM) i7-12650H
+GPU: NVIDIA GeForce RTX 3050 Ti Laptop GPU
+Memory: { "physical": 34011602944, "free": 22391222272, "available": 36159086592, "stack": 8388608 }
+OS: Windows
+Low preset, 1280x720, Compatibility, VSync disabled. Three-second rendered-frame samples per location; not full-playthrough performance.
+security: average 528.4 FPS; p95 2.52 ms; worst 3.67 ms
+maintenance: average 799.5 FPS; p95 1.64 ms; worst 2.70 ms
+observation: average 1248.8 FPS; p95 1.17 ms; worst 2.58 ms
+escape: average 721.1 FPS; p95 1.85 ms; worst 2.79 ms
+```
+
+Existing sandbox certificate/shader-cache diagnostics and intermittent accelerated audio-teardown warnings persist. No GDScript errors in passing suites.
+
+## Darker facility and floor journals - September 26, 2026
+
+Reduced ambient energy from 0.55 to 0.07 and room-light energy from 1.1 to 0.22, with a shorter six-meter reach and dimmer ceiling fixtures. Brightness preferences scale the new baseline; the coolant flicker restores it correctly. Flashlight output remains strong. Replaced the three upright clue blocks and floating labels with small floor books, each with covers, page edges, a spine, a cover label, and a bookmark. Existing clue IDs and journal behavior remain intact.
+
+Validation: all 37 M4 and 11 M5 checks pass. A temporary rendered fixture verified the actual player interaction ray hits all three books from standing height. Inspected flashlight-on/off screenshots and a close book view. Existing sandbox certificate-store, log-write, and shader-cache diagnostics occurred; no GDScript errors. Manual darkness preference/playthrough feedback remains useful.
+## Title logo and Mara hair - September 26, 2026
+
+Added an original code-drawn nuclear insignia and BLACKWELL / LAST SHIFT wordmark to the main menu, with gold industrial accents. The logo replaces only the main-menu heading and retains button focus and layout. Mara now has long chestnut hair beneath her hard hat, with face-framing side locks and back strands.
+
+Validation: 11 M5 menu/settings checks pass. Inspected rendered 1280x720 title-screen and front/back Mara screenshots; all title buttons fit, and hair leaves her face visible. Existing certificate-store/shader-cache sandbox diagnostics remain. No GDScript errors in the check run.
+## Shaped character meshes - September 26, 2026
+
+Replaced oval torsos, limbs, hands, boots, necks, noses, and heads with original custom cross-section meshes: tapered clothing, chamfered edges, sloping shoulders, defined jaws, and flat boot soles. Mara's long hair now uses a continuous shaped back section and two tapered side locks. Small facial details and rounded headgear retain curved primitives. Both NPCs retain existing animation pivots and collision geometry.
+
+Validation: M2 NPC/navigation/dialogue suite passes with zero failures. Inspected rendered Mara front/back and Eli views; corrected mesh winding during visual review. Windows EXE/PCK re-exported successfully. Existing certificate-store and editor-settings sandbox diagnostics persist; no GDScript errors in passing checks.
+## Maintenance introductions gate and focused journal reading - September 26, 2026
+
+Maintenance now starts behind a physical door that blocks player collision and NPC navigation until both Mara and Eli have been spoken to. Either introduction order works; repeated conversations with one NPC do not unlock it. Opening removes the door and rebuilds navigation. New games relock it; facility tours and restored isolation checkpoints keep access open. Reading a book shows only that note and Return to facility; J retains the collected-note index.
+
+Validation: all 37 updated M3 checks and 41 updated M4 checks pass, including blocked player movement, locked/open navigation, repeated and reversed introductions, new-game reset, actual repair/access/evacuation travel, single-note pickup views, journal index, and checkpoint retries. Inspected locked-door and single-note screenshots. Windows EXE/PCK exported successfully. Existing certificate-store/editor-settings sandbox diagnostics remain; no GDScript errors in passing checks.
