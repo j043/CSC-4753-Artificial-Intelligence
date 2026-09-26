@@ -4,6 +4,8 @@ const IndustrialArt = preload("res://scripts/industrial_art.gd")
 var tour := false
 var progression: Node
 var gates: Array[StaticBody3D] = []
+var maintenance_door: StaticBody3D
+var maintenance_sign: Label3D
 var navigation: NavigationRegion3D
 var navigation_ready := false
 var npcs: Array[CharacterBody3D] = []
@@ -34,6 +36,12 @@ func _ready() -> void:
 		build_room(room)
 	gate(Vector3(0, 0, -18), "GATE A - EMERGENCY POWER", "Locked: emergency power must be restored by Mara.")
 	gate(Vector3(0, 0, -30), "GATE B - SECURITY ACCESS", "Locked: power restoration and Eli's authorization are required.")
+	if not tour:
+		maintenance_door = box(Vector3(6, 1.3, -12), Vector3(0.24, 2.6, 3), Color("544b32"))
+		maintenance_door.set_meta("prompt", "Inspect maintenance access")
+		maintenance_door.set_meta("message", "Maintenance is locked. Speak to both Mara and Eli in security to unlock it.")
+	sign_text("MAINTENANCE / " + ("OPEN" if tour else "LOCKED - SPEAK TO MARA AND ELI"), Vector3(5.78, 2.85, -12), -PI / 2, 15)
+	maintenance_sign = get_child(get_child_count() - 1) as Label3D
 	prop(Vector3(-3.6, 0.65, -2.5), Vector3(2.6, 1.3, 1.2), "Security desk", "Facility lockdown active. Control room is north; evacuation lift is west.")
 	prop(Vector3(-3.6, 0.8, -14.5), Vector3(2.5, 1.6, 1.2), "Control console", "Maintenance workshop is east. Mara repairs power; Eli authorizes access here.")
 	prop(Vector3(15, 0.55, -14), Vector3(3, 1.1, 1.4), "Maintenance workbench", "Replacement component tray and emergency-power repair station. Ask Mara to repair after collection.")
@@ -216,6 +224,17 @@ func unlock_gate(index: int) -> void:
 	for child in get_children():
 		if child is Label3D and child.text.begins_with("GATE " + ("A" if index == 0 else "B")):
 			child.text = child.text.replace("LOCKED", "OPEN")
+	build_navigation()
+
+func unlock_maintenance() -> void:
+	if not is_instance_valid(maintenance_door):
+		return
+	remove_child(maintenance_door)
+	maintenance_door.queue_free()
+	maintenance_door = null
+	maintenance_sign.text = "MAINTENANCE / OPEN"
+	if has_meta("sounds"):
+		get_meta("sounds").cue("door")
 	build_navigation()
 
 func set_component_visible(value: bool) -> void:

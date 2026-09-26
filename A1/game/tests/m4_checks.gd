@@ -25,9 +25,13 @@ func run() -> void:
 	for id in app.narrative.CLUES:
 		app.narrative.collect(id)
 		check(app.mode == "journal" and paused and not app.player.controls_enabled, "Clue opens readable paused journal: " + id)
+		check(app.menu.get_child_count() == 3 and app.menu.get_child(1).text == app.narrative.CLUES[id], "Picked-up journal shows only its own text and return button: " + id)
 		app.resume()
 	app.narrative.collect("Voice warning")
 	check(app.narrative.clues.size() == 3, "Rereading never duplicates clues")
+	app.resume()
+	app.show_journal()
+	check(app.menu.get_child_count() == 6, "J journal index still offers all three collected notes")
 	app.resume()
 	app.progress.stage = 5
 	app.progress.component = "consumed"

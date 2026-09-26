@@ -24,6 +24,7 @@ func run() -> void:
 	# Isolate the original interaction/navigation slice from M3 story effects.
 	app.tour = true
 	app.world.progression = null
+	app.world.unlock_maintenance()
 	await frames(10)
 	var mara = app.world.npcs[0]
 	var eli = app.world.npcs[1]

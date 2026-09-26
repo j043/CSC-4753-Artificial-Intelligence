@@ -32,6 +32,7 @@ func meet(npc: CharacterBody3D) -> void:
 		met.append(npc.person)
 	if met.size() == 2 and stage == 1:
 		stage = 2
+		app.world.unlock_maintenance()
 		queue_exchange("briefing")
 
 func queue_exchange(id: String) -> void:

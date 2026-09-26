@@ -432,8 +432,9 @@ func show_journal(id := "") -> void:
 	get_tree().paused = true
 	notice.hide()
 	clear_menu("FIELD NOTES", Narrative.CLUES[id] if id != "" else "Collected notes remain available here. Escape returns to the facility.")
-	for clue in narrative.clues:
-		button(clue, show_journal.bind(clue))
+	if id == "":
+		for clue in narrative.clues:
+			button(clue, show_journal.bind(clue))
 	if narrative.clues.is_empty():
 		var empty := Label.new()
 		empty.text = "No notes collected. Look for labeled documents in the facility."
