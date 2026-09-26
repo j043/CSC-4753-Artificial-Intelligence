@@ -46,3 +46,21 @@ Testing results and unresolved limitations are recorded in verification.md. Late
 Enlarged dialogue body text to 30 pixels and placed choices in a horizontal row, with an Escape hint replacing End conversation. Commands close the menu immediately and release the NPC to act. Bottom-screen feedback types at 40 characters per second, holds for five seconds after completion, then clears; overlapping lines queue and timing freezes outside gameplay. All 56 M2 checks pass, including command closing, horizontal choices, exit-button removal, typing/hold/queue timing. Inspected actual-renderer horizontal choices at 720p and bottom feedback at 1080p. User acceptance remains pending.
 
 - User approved M2's revised appearance and feel and requested the milestone commit. Next session: M3 objective progression, repairs/security authorization, NPC exchanges and cooperative puzzle; see the specification for full scope.
+
+## M3 - September 25, 2026
+
+Connected the interaction/navigation slice to an authoritative objective controller. Component state advances available / held / consumed; repair and access require actual assigned-station arrival. Opening gates removes collision and rebakes navigation. Three queued radio/intercom exchanges serialize with player dialogue and typed feedback; access opens at Eli's authorization line, and the imitation warning changes a retained hint. Isolation validates both active station assignments; cancellation revokes readiness. Both NPCs leave for separate lift anchors and the lift waits for them. Success supports a fresh game or menu.
+
+Preserved compact horizontal dialogue and Escape/command behavior. Added objective/readiness HUD, phase-aware choices, station signs, and early-attempt explanations. The M2 regression fixture disables story effects to isolate navigation and commands. M3 tests exercise actual NPC travel but reposition the player and accelerate subtitle reading. Manual playthrough remains needed. Countdown, checkpoint, trust decision, polished horror/audio, and final pacing remain later work.
+
+### M3 interaction refinement - September 25, 2026
+
+New object/NPC interactions and commands replace bottom feedback, reset typing/hold time, and clear stale acknowledgement backlog. Interrupted mandatory exchange lines replay afterward instead of silently completing. NPCs give phase-specific situation, role, and next-step information immediately; follow/wait, role task, and one optional context page replace the nested question tree. Updated M2 and M3 regression checks pass, including interruption/resumption and immediate command feedback.
+
+### Component pickup timing fix - September 25, 2026
+
+Meeting both survivors now unlocks component retrieval immediately instead of waiting for all briefing subtitles. The delayed briefing cannot regress later objectives. Early attempts explicitly report "Not collected"; tour inspection explicitly explains that objectives require initial-lockdown mode. All 28 M3 checks pass, including pickup during an interrupted briefing, immediate Mara acknowledgement/repair availability, and preserved state after delayed briefing completion.
+
+### Playthrough feedback - September 25, 2026
+
+The user reports completing the entire current game successfully. This is manual M3 flow evidence, not a timed new-player acceptance run. Reduced subtitle hold time to three seconds after typing. Shortened command acknowledgements, removed redundant repair/access arrival lines and lift boarding chatter, and retained isolation readiness, actionable blockage feedback, objective updates, and the three story exchanges. One isolation message explicitly announces both survivors moving to the lift.

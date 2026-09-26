@@ -21,6 +21,9 @@ func run() -> void:
 	app = load("res://scenes/main.tscn").instantiate()
 	root.add_child(app)
 	app.start(false)
+	# Isolate the original interaction/navigation slice from M3 story effects.
+	app.tour = true
+	app.world.progression = null
 	await frames(10)
 	var mara = app.world.npcs[0]
 	var eli = app.world.npcs[1]
@@ -99,7 +102,7 @@ func run() -> void:
 	check(mara.position.distance_to(mara_stopped) < 0.05 and eli.position.distance_to(eli_stopped) < 0.05, "Turning in place does not move followers out of view")
 	app.player.rotation.y = 0
 	app.open_dialogue(mara)
-	for page in ["root", "help", "questions", "situation", "expertise"]:
+	for page in ["root", "context"]:
 		app.topic(page)
 		var choices := 0
 		for child in app.choices.get_children():
@@ -157,16 +160,23 @@ func run() -> void:
 	app.notice_queue.clear()
 	app.show_notice("Mara: Ready.")
 	app.update_notice(0.1)
-	check(app.notice.visible_characters == 4 and app.notice_time == 5, "Bottom feedback types before hold timer starts")
+	check(app.notice.visible_characters == 4 and app.notice_time == 3, "Bottom feedback types before hold timer starts")
 	app.update_notice(1)
-	app.update_notice(4.9)
-	check(not app.notice.text.is_empty(), "Completed feedback remains for five seconds")
+	app.update_notice(2.9)
+	check(not app.notice.text.is_empty(), "Completed feedback remains for three seconds")
 	app.show_notice("Eli: Understood.")
 	app.update_notice(0.11)
 	check(app.notice.text == "Eli: Understood." and app.notice.visible_characters == 0, "Overlapping feedback queues without erasing current line")
 	app.update_notice(1)
-	app.update_notice(5)
+	app.update_notice(3)
 	check(app.notice.text.is_empty(), "Feedback disappears after hold timer")
+	app.show_notice("Mara: Following you.")
+	app.show_notice("Eli: stale queued feedback")
+	app.open_dialogue(mara)
+	check(app.notice.text.is_empty() and app.notice_queue.is_empty(), "Talking replaces old feedback and clears stale backlog")
+	check(app.choices.get_child_count() == 3 and app.choices.get_child(1).text == "Isolation station", "Role task is directly available without nested menus")
+	app.order("wait")
+	check(app.notice.text.contains("Holding here") and app.notice.visible_characters == 0, "New command immediately starts its own typed feedback")
 	app.show_menu()
 	await frames(3)
 	print("M2 CHECKS COMPLETE: %d failures" % failures)

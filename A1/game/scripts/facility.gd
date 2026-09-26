@@ -1,6 +1,7 @@
 extends Node3D
 ## Deterministic graybox: 12 m rooms, 3 m openings, no moving crush hazards.
 var tour := false
+var progression: Node
 var gates: Array[StaticBody3D] = []
 var navigation: NavigationRegion3D
 var navigation_ready := false
@@ -28,17 +29,19 @@ func _ready() -> void:
 	add_child(environment)
 	for room in ROOMS:
 		build_room(room)
-	gate(Vector3(0, 0, -18), "GATE A - EMERGENCY POWER", "Locked: emergency power must be restored by Mara.\nPower restoration arrives in M3; use Facility tour to inspect beyond this gate.")
-	gate(Vector3(0, 0, -30), "GATE B - SECURITY ACCESS", "Locked: power restoration and Eli's authorization are required.\nObjective progression arrives in M3; use Facility tour to inspect beyond this gate.")
+	gate(Vector3(0, 0, -18), "GATE A - EMERGENCY POWER", "Locked: emergency power must be restored by Mara.")
+	gate(Vector3(0, 0, -30), "GATE B - SECURITY ACCESS", "Locked: power restoration and Eli's authorization are required.")
 	prop(Vector3(-3.6, 0.65, -2.5), Vector3(2.6, 1.3, 1.2), "Security desk", "Facility lockdown active. Control room is north; evacuation lift is west.")
-	prop(Vector3(-3.6, 0.8, -14.5), Vector3(2.5, 1.6, 1.2), "Control console", "Emergency power is offline. Maintenance workshop is east.\nRepair and objective systems arrive in M3.")
-	prop(Vector3(15, 0.55, -14), Vector3(3, 1.1, 1.4), "Maintenance workbench", "Tools and an emergency-power repair station. Mara's task arrives in M3.")
+	prop(Vector3(-3.6, 0.8, -14.5), Vector3(2.5, 1.6, 1.2), "Control console", "Maintenance workshop is east. Mara repairs power; Eli authorizes access here.")
+	prop(Vector3(15, 0.55, -14), Vector3(3, 1.1, 1.4), "Maintenance workbench", "Replacement component tray and emergency-power repair station. Ask Mara to repair after collection.")
 	for z in [-26.5, -24.0, -21.5]:
 		box(Vector3(-4, 1.4, z), Vector3(1.5, 2.8, 1.5), Color(0.16, 0.4, 0.46))
-	prop(Vector3(3.7, 0.65, -36), Vector3(1.7, 1.3, 2.5), "Chamber control console", "Isolation requires Mara and Eli at their stations.\nThe cooperative puzzle arrives in M3.")
+	prop(Vector3(3.7, 0.65, -36), Vector3(1.7, 1.3, 2.5), "Chamber control console", "Isolation requires Mara at the maintenance panel and Eli at the security override.")
+	sign_text("MARA / MAINTENANCE PANEL", Vector3(-2, 2.6, -37), 0, 22)
+	sign_text("ELI / SECURITY OVERRIDE", Vector3(2, 2.6, -39), 0, 22)
 	box(Vector3(0, 1.8, -41.6), Vector3(7, 2.5, 0.2), Color(0.08, 0.17, 0.22))
 	sign_text("EXPERIMENTAL CHAMBER / SEALED", Vector3(0, 2.5, -41.4), 0, 25)
-	prop(Vector3(-15.5, 0.9, -2), Vector3(1, 1.8, 1), "Lift call panel", "Lift unavailable: isolate the chamber before evacuation.\nEndings and evacuation arrive in M4.")
+	prop(Vector3(-15.5, 0.9, -2), Vector3(1, 1.8, 1), "Lift call panel", "Isolate the chamber, then board with both survivors to evacuate.")
 	box(Vector3(-16, 0.04, 1), Vector3(3, 0.08, 4), Color(0.6, 0.54, 0.27))
 	build_navigation()
 
@@ -137,6 +140,9 @@ func prop(at: Vector3, size: Vector3, title: String, message: String) -> void:
 	var body := box(at, size, Color(0.16, 0.20, 0.23))
 	body.set_meta("prompt", "Inspect " + title)
 	body.set_meta("message", message)
+	body.set_meta("object_id", title)
+	if title == "Maintenance workbench":
+		body.set_meta("prompt", "Collect replacement component / inspect workbench")
 	sign_text(title.to_upper(), at + Vector3(0, size.y / 2 + 0.3, 0), 0, 22)
 
 func gate(at: Vector3, title: String, message: String) -> void:
@@ -166,3 +172,14 @@ func area_name(at: Vector3) -> String:
 		if absf(at.x - center.x) <= 6 and absf(at.z - center.z) <= 6:
 			return room[1]
 	return "FACILITY"
+
+func unlock_gate(index: int) -> void:
+	if index >= gates.size() or not is_instance_valid(gates[index]):
+		return
+	var gate_body := gates[index]
+	remove_child(gate_body)
+	gate_body.queue_free()
+	for child in get_children():
+		if child is Label3D and child.text.begins_with("GATE " + ("A" if index == 0 else "B")):
+			child.text = child.text.replace("LOCKED", "OPEN")
+	build_navigation()

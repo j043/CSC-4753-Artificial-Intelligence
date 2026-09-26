@@ -274,3 +274,21 @@ that looks great! canyou give me a brief summary of what was done in these two m
 
 [23] September 21, 2026 | Approve and commit M2
 awesome, it looks fantastic. those fixes really improved the feel. go ahead and commit this and we will pick up m3 tomorrow! 
+
+[24] September 25, 2026 | Begin M3
+hello codex! lets get started with M3, shall we?
+
+[25] September 25, 2026 | Replace interaction feedback and simplify NPC dialogue
+lets change the dialog scroll at the bottom to override the last clicked output. for example, if the bottom still reads "following you" from one of the npcs, then make sure clicking something else replaces the current dialog scroll. also, lets reduce the amount of dialog options when speaking to NPCs. Id rather them give you more info off the bat, instead of having you search through a ton of questions
+
+[26] September 25, 2026 | Current main-flow playability
+is the main flow of the game actually playable at this moment?
+
+[27] September 25, 2026 | Component pickup and Mara response mismatch
+when i collect the component and talk to mara again, she still says she needs the component 
+
+[28] September 25, 2026 | Successful playthrough and shorter dialogue
+ok i just walked through the whole game and it went well! lets do less intermediary dialog, and lets also shorten the amount of time that its on screen to 3 seconds
+
+[29] September 25, 2026 | Commit M3 and begin M4
+lets commit this and then get started on m4!

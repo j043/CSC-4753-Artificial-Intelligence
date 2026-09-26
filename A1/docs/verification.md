@@ -138,3 +138,29 @@ Enlarged dialogue body text to 30 pixels and placed choices in a horizontal row,
 ### M2 user acceptance - September 21, 2026
 
 User approved the revised appearance and feel, confirmed that the fixes improved the experience, and authorized committing M2 before resuming M3 tomorrow. This records general playtest acceptance; it does not independently verify every manual edge case or later milestone requirement. M2 is accepted for commit.
+
+## M3 verification - September 25, 2026
+
+Implemented: `scripts/progression.gd` owns ordered objectives, unique component state, exchange effects, readiness, and lift success. Main/player/facility/NPC integration provides interactions, phase hints, gates/navigation, and evacuation.
+
+- Godot 4.7.2 Standard, Windows, Compatibility: all 29 M1, 56 M2, and 24 M3 automated checks pass. M2 deliberately disables story effects while retaining initially locked geometry.
+- M3 covers early interactions, deferred exchanges, repeated pickup, interrupted repair retention, actual NPC repair/access travel, both gate navigation changes, three one-shot exchanges and changed hint, isolation arrival/cancellation/reassignment, premature lift activation, pause during evacuation, actual NPC lift travel, success, and fresh-run reset.
+- Tests directly call interactions and reposition the player. They do not prove complete keyboard/mouse playthrough or first-time-player comprehension. No full AC is newly declared verified. AC-03 through AC-09 have partial implementation/test evidence; AC-12 timed escape/checkpoint remains M4.
+- Inspected 1280x720 rendered captures for horizontal dialogue and objective/readiness readability. A wrapped objective exposed potential prompt overlap, corrected by placing the prompt below actual HUD height. Logs/screenshots remain ignored build artifacts.
+- Engine emitted a Windows certificate-store diagnostic; initial sandboxed editor/log attempts reported unavailable user-profile writes. No GDScript errors occurred. Subsequent checks use a writable build log.
+
+Pending: user playthrough using only in-game guidance, natural subtitle pacing/interruption, physical console targeting, player and two NPCs through the return route, 1080p visual review, measured timing/performance, and final narrative outcomes.
+
+Windows release export completed successfully. Copied `Blackwell.exe` and `Blackwell.pck` into the separate ignored `builds/m3-portability-check/` directory and ran headless startup there: exit 0, "Blackwell M3 ready", no script errors. The certificate-store diagnostic persisted. This verifies packaged startup on this computer, not exported gameplay or second-machine compatibility.
+
+### M3 interaction refinement - September 25, 2026
+
+New object/NPC interactions and commands replace bottom feedback, reset typing/hold time, and clear stale acknowledgement backlog. Interrupted mandatory exchange lines replay afterward instead of silently completing. NPCs give phase-specific situation, role, and next-step information immediately; follow/wait, role task, and one optional context page replace the nested question tree. Updated M2 and M3 regression checks pass, including interruption/resumption and immediate command feedback.
+
+### Component pickup timing fix - September 25, 2026
+
+Meeting both survivors now unlocks component retrieval immediately instead of waiting for all briefing subtitles. The delayed briefing cannot regress later objectives. Early attempts explicitly report "Not collected"; tour inspection explicitly explains that objectives require initial-lockdown mode. All 28 M3 checks pass, including pickup during an interrupted briefing, immediate Mara acknowledgement/repair availability, and preserved state after delayed briefing completion.
+
+### Playthrough feedback - September 25, 2026
+
+The user reports completing the entire current game successfully. This is manual M3 flow evidence, not a timed new-player acceptance run. Reduced subtitle hold time to three seconds after typing. Shortened command acknowledgements, removed redundant repair/access arrival lines and lift boarding chatter, and retained isolation readiness, actionable blockage feedback, objective updates, and the three story exchanges. One isolation message explicitly announces both survivors moving to the lift.

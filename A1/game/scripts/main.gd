@@ -3,6 +3,8 @@ extends Control
 const Facility = preload("res://scripts/facility.gd")
 const Player = preload("res://scripts/player.gd")
 const NPC = preload("res://scripts/npc.gd")
+const Progression = preload("res://scripts/progression.gd")
+var progress: Node
 var speaker: CharacterBody3D
 var dialogue_page := "root"
 var dialogue_line := ""
@@ -17,6 +19,7 @@ var prompt: Label
 var notice: Label
 var crosshair: Label
 var shade: ColorRect
+var notice_is_exchange := false
 var notice_time := 0.0
 var notice_characters := 0.0
 var notice_queue: Array[String] = []
@@ -32,7 +35,9 @@ func _ready() -> void:
 			event.physical_keycode = binding[1]
 			InputMap.action_add_event(binding[0], event)
 	hud = label_at(Vector2(24, 20), 20)
-	prompt = label_at(Vector2(24, 112), 22)
+	hud.custom_minimum_size.x = 1180
+	hud.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	prompt = label_at(Vector2(24, 145), 22)
 	notice = label_at(Vector2.ZERO, 26)
 	notice.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	notice.offset_left = 60
@@ -68,7 +73,7 @@ func _ready() -> void:
 	menu.add_theme_constant_override("separation", 14)
 	margin.add_child(menu)
 	show_menu()
-	print("Blackwell M2 ready")
+	print("Blackwell M3 ready")
 
 func label_at(offset: Vector2, size: int) -> Label:
 	var label := Label.new()
@@ -131,12 +136,13 @@ func show_menu() -> void:
 	player = null
 	speaker = null
 	previous_mode = "play"
+	notice_is_exchange = false
 	hud.text = ""
 	prompt.text = ""
 	notice.text = ""
 	notice_queue.clear()
 	notice_time = 0
-	clear_menu("BLACKWELL: LAST SHIFT", "M2 - NPC interaction slice\nWASD move / Mouse look / Shift sprint\nE interact or talk / F flashlight / Escape pause\nMeet Mara and Eli in security. Objective progression arrives in M3.")
+	clear_menu("BLACKWELL: LAST SHIFT", "M3 - complete objective skeleton\nWASD move / Mouse look / Shift sprint\nE interact or talk / F flashlight / Escape pause\nMeet Mara and Eli, restore power, isolate the chamber, and evacuate.")
 	button("Start - initial lockdown", start.bind(false))
 	button("Facility tour - gates open", start.bind(true))
 	button("Quit", func(): get_tree().quit())
@@ -151,6 +157,11 @@ func start(open_gates: bool) -> void:
 	player = Player.new()
 	world.add_child(player)
 	player.position = Vector3(0, 0.1, 3)
+	progress = Progression.new()
+	progress.app = self
+	world.add_child(progress)
+	world.progression = progress
+	player.object_selected.connect(interact_object)
 	player.interacted.connect(show_notice)
 	player.npc_selected.connect(open_dialogue)
 	for engineer in [true, false]:
@@ -174,6 +185,7 @@ func resume() -> void:
 		draw_dialogue()
 		return
 	mode = "play"
+	notice.show()
 	if is_instance_valid(player):
 		player.controls_enabled = true
 	get_tree().paused = false
@@ -212,7 +224,17 @@ func show_notice(message: String) -> void:
 	notice.text = message
 	notice.visible_characters = 0
 	notice_characters = 0
-	notice_time = 5.0
+	notice_time = 3.0
+
+func replace_interaction_feedback() -> void:
+	# Replay an interrupted story line after the new feedback, never silently skip it.
+	if notice_is_exchange and is_instance_valid(progress) and progress.active != "":
+		progress.line_index = maxi(0, progress.line_index - 1)
+	notice_is_exchange = false
+	notice.text = ""
+	notice_queue.clear()
+	notice_time = 0
+	notice_characters = 0
 
 func update_notice(delta: float) -> void:
 	if notice.text.is_empty():
@@ -223,6 +245,7 @@ func update_notice(delta: float) -> void:
 	else:
 		notice_time = maxf(0, notice_time - delta)
 		if notice_time == 0:
+			notice_is_exchange = false
 			notice.text = ""
 			if not notice_queue.is_empty():
 				show_notice(notice_queue.pop_front())
@@ -230,11 +253,18 @@ func update_notice(delta: float) -> void:
 func open_dialogue(npc: CharacterBody3D) -> void:
 	if mode != "play":
 		return
+	replace_interaction_feedback()
+	if not tour and progress.stage >= 6:
+		show_notice("Evacuation underway. Meet both survivors at the lift.")
+		return
+	if not tour:
+		progress.meet(npc)
 	speaker = npc
 	speaker.talking = true
 	player.controls_enabled = false
 	player.velocity = Vector3.ZERO
 	mode = "dialogue"
+	notice.hide()
 	dialogue_page = "root"
 	dialogue_line = ""
 	prompt.text = ""
@@ -253,41 +283,63 @@ func topic(page: String, line := "") -> void:
 	draw_dialogue()
 
 func order(command: String) -> void:
+	replace_interaction_feedback()
 	speaker.command(command)
 	close_dialogue()
 
 func draw_dialogue() -> void:
 	var engineer: bool = speaker.engineer
-	var intro := "Let's inspect the repair station in maintenance." if engineer else "Stay together. I can inspect the security station in control."
-	if speaker.task_ready:
-		intro = "I'm in position. We need a replacement component before repairs." if engineer else "I'm in position. We need emergency power before authorization."
+	var intro: String
+	if tour:
+		intro = "I handle machinery. My isolation panel is in observation; assign me there when you're ready." if engineer else "I handle access. My security override is in observation. The lift is west of security."
+	else:
+		match progress.stage:
+			1:
+				intro = "The lockdown cut our power, but containment is still active. I can repair the supply with the spare on the maintenance workbench, east of control. Speak to Eli too; he handles security access." if engineer else "Only Mara answered my call. Coolant is locked until she restores power; then I can authorize observation access. Speak to her too. Our exit is the lift west of security."
+			2:
+				intro = "Get the replacement component from the maintenance workbench, east of control. Then ask me to restore power; I'll install it at the repair station." if engineer else "Bring Mara the spare from maintenance, east of control. Once power is back, send me to the control-room security station to open observation."
+			3:
+				intro = "You've got the component. Send me to restore power at the maintenance station. I'll install it and open the coolant gate." if engineer else "Mara has what she needs. Ask her to restore power first; then I can authorize observation access from control."
+			4:
+				intro = "Power is stable and the coolant gate is open. Ask Eli to authorize observation access at the control-room station. We'll need all three of us for isolation." if engineer else "Power is back. Send me to authorize observation access; I'll operate the control-room security station and open the next gate."
+			_:
+				intro = "In observation, assign me to the maintenance panel and Eli to the security override. When we're both READY, activate the chamber console on the east side." if engineer else "Assign both of us to our observation stations. I'll hold the security override while Mara holds her panel. You activate chamber isolation, then we return to the lift west of security."
+				if progress.warning_known:
+					intro += " That voice was an imitation. Trust our isolation procedure."
+	if dialogue_page == "context":
+		intro = "The main supply failed while the containment alarm stayed on. That isn't a normal blackout. My job is to repair power and hold the maintenance panel during isolation. Check physical readings before trusting the intercom." if engineer else "Only Mara responded to the lockdown. Nobody goes alone. I handle locked routes and the isolation override. To evacuate, head south through coolant and control, then west from security to the lift."
 	clear_menu(speaker.person, dialogue_line if dialogue_line != "" else speaker.person + ": " + intro)
-	if dialogue_line != "":
-		button("Back", topic.bind(dialogue_page))
-	elif dialogue_page == "root":
-		button("Wait here" if speaker.state in ["follow", "travel_to_task", "perform_task"] else "Follow me", order.bind("wait" if speaker.state in ["follow", "travel_to_task", "perform_task"] else "follow"))
-		button("Help me with something", topic.bind("help"))
-	elif dialogue_page in ["help", "commands"]:
-		button("Go to your isolation station" if tour else "Inspect your station", order.bind("isolation" if tour else "station"))
-		button("Ask a question", topic.bind("questions"))
+	if dialogue_page == "context" or dialogue_line != "":
 		button("Back", topic.bind("root"))
-	elif dialogue_page == "questions":
-		button("What happened?", topic.bind("situation"))
-		button("What should we do?", topic.bind("expertise"))
-		button("Back", topic.bind("help"))
-	elif dialogue_page == "situation":
-		button("What failed?" if engineer else "Any other survivors?", topic.bind("situation", speaker.person + ": " + ("The main supply failed, but the containment alarm stayed on. It wasn't a simple blackout." if engineer else "Only Mara answered. We search together; nobody goes alone.")))
-		button("Can we fix it?" if engineer else "Why are the doors locked?", topic.bind("situation", speaker.person + ": " + ("We need a replacement component from maintenance. I can inspect the station first." if engineer else "Coolant needs power. Observation needs my authorization too.")))
-		button("Back", topic.bind("questions"))
-	elif dialogue_page == "expertise":
-		button("How does isolation work?" if engineer else "How do we open observation?", topic.bind("expertise", speaker.person + ": " + ("Three people: me at maintenance, Eli at security, you at chamber control." if engineer else "Restore power first. Then I check the access panel and authorize the route.")))
-		button("What worries you?" if engineer else "Where is the exit?", topic.bind("expertise", speaker.person + ": " + ("The alarms are out of sequence. Check physical readings before trusting the intercom." if engineer else "Back through coolant and control, then west from security to the lift.")))
-		button("Back", topic.bind("questions"))
+		return
+	button("Wait here" if speaker.state in ["follow", "travel_to_task", "perform_task"] else "Follow me", order.bind("wait" if speaker.state in ["follow", "travel_to_task", "perform_task"] else "follow"))
+	button("Isolation station" if tour or progress.stage >= 5 else ("Restore power" if engineer else "Authorize access"), order.bind("isolation" if tour or progress.stage >= 5 else "station"))
+	button("More context", topic.bind("context"))
 
 func _process(delta: float) -> void:
 	if mode != "play" or not is_instance_valid(player):
 		return
-	hud.text = "%s\n%s\nF Flashlight: %s  |  E Interact  |  Esc Pause" % [world.area_name(player.position), "FACILITY TOUR - gates open" if tour else "LOCKDOWN - explore; power restoration arrives in M3", "ON" if player.light.visible else "OFF"]
+	hud.text = "%s\n%s\nF Flashlight: %s  |  E Interact  |  Esc Pause" % [world.area_name(player.position), "FACILITY TOUR - gates open" if tour else ("O%d/6: %s\n%s" % [mini(progress.stage, 6), progress.hint(), progress.readiness()]), "ON" if player.light.visible else "OFF"]
+	prompt.position.y = hud.position.y + hud.size.y + 12
 	var target: Object = player.interaction_target()
 	prompt.text = "[E] " + str(target.get_meta("prompt")) if target else ""
 	update_notice(delta)
+	if not tour:
+		progress.tick()
+
+func interact_object(target: Object) -> void:
+	replace_interaction_feedback()
+	if tour:
+		show_notice("Facility tour: inspection only; no component collected. Choose Start - initial lockdown to play objectives." if target.get_meta("object_id", "") == "Maintenance workbench" else str(target.get_meta("message")))
+	else:
+		progress.interact(target)
+
+func show_success() -> void:
+	mode = "success"
+	player.controls_enabled = false
+	get_tree().paused = true
+	notice.text = ""
+	notice_queue.clear()
+	clear_menu("EVACUATION COMPLETE", "You, Mara, and Eli escaped. The chamber remains isolated.\nM3 playable skeleton complete. Narrative choices and timed escape arrive in M4.")
+	button("New Game", func(): show_menu(); start(false))
+	button("Return to Menu", show_menu)

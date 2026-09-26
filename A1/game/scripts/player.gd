@@ -1,5 +1,6 @@
 extends CharacterBody3D
 signal interacted(message: String)
+signal object_selected(target: Object)
 signal npc_selected(npc: CharacterBody3D)
 var controls_enabled := true
 const WALK_SPEED := 3.4
@@ -51,7 +52,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			if target.has_meta("npc"):
 				npc_selected.emit(target)
 			else:
-				interacted.emit(str(target.get_meta("message")))
+				object_selected.emit(target)
 
 func interaction_target() -> Object:
 	ray.force_raycast_update()

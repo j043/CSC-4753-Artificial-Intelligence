@@ -30,3 +30,15 @@ Add exact routes, dialogue options, and build ID when these behaviors exist.
 - Show typed bottom-screen acknowledgements: each completed line remains for five seconds, then disappears; overlapping lines queue.
 - Escape closes dialogue first; another press pauses gameplay. Pause during travel to verify freezing. Losing application focus during dialogue still pauses safely and preserves the conversation.
 - Obstruct an NPC, clear the path, and reassign after its recovery message. Power/gate objectives, NPC exchanges and cooperative effects remain M3.
+
+## M3 playable walkthrough
+
+- Speak to both survivors, close dialogue, and read the automatic briefing.
+- Collect the component at the maintenance workbench; try repeated collection.
+- Assign Mara's repair, interrupt with Wait, and reassign. Confirm Gate A opens.
+- Assign Eli's authorization and watch his exchange open Gate B.
+- Enter coolant for the false voice and both survivors' responses; request guidance afterward.
+- Try chamber control early. Assign both isolation stations, cancel one, retry, and inspect the missing-participant explanation.
+- Reassign, isolate, and return to the lift with both survivors. Activate the panel for success.
+- Start a new game and confirm initial gates, component, objectives, and NPCs reset.
+- M4 decision/countdown/checkpoint and alternate ending are not in this skeleton.

@@ -7,6 +7,7 @@ var player: CharacterBody3D
 var facility: Node3D
 var state := "idle"
 var task_ready := false
+var task_id := ""
 var talking := false
 var destination := Vector3.ZERO
 var path := PackedVector3Array()
@@ -67,7 +68,11 @@ func say(text: String) -> String:
 	return line
 
 func command(order: String) -> String:
-	if order == "repair":
+	if facility.progression and not facility.tour:
+		var reason: String = facility.progression.command_reason(self, order)
+		if reason != "":
+			return say(reason)
+	if order == "repair" and not facility.progression:
 		return say("I need the replacement component and emergency-power objective. Repair progression arrives in M3." if engineer else "Power must be restored before I can authorize access. Security progression arrives in M3.")
 	if order == "wait":
 		task_ready = false
@@ -75,12 +80,14 @@ func command(order: String) -> String:
 		destination = position
 		velocity = Vector3.ZERO
 		path.clear()
-		return say("Holding here. Tell me when to move.")
+		return say("Holding here.")
 	var target: Vector3
 	if order == "follow":
 		target = follow_target()
-	elif order == "station":
+	elif order in ["station", "repair"]:
 		target = Vector3(13, 0, -12) if engineer else Vector3(-2, 0, -12)
+	elif order == "evacuate":
+		target = Vector3(-14, 0, 0 if engineer else 2)
 	elif order == "isolation":
 		target = Vector3(-2, 0, -36) if engineer else Vector3(2, 0, -38)
 	else:
@@ -91,6 +98,7 @@ func command(order: String) -> String:
 			if is_instance_valid(gate) and (position.z - gate.position.z) * (target.z - gate.position.z) < 0:
 				return say("No reachable route. " + ("Gate A needs emergency power restored." if gate.position.z > -24 else "Gate B needs power and security authorization."))
 		return say("No reachable route. Check the locked gates or clear the destination, then ask again.")
+	task_id = order
 	task_ready = false
 	state = "follow" if order == "follow" else "travel_to_task"
 	destination = target
@@ -101,7 +109,9 @@ func command(order: String) -> String:
 	progress_time = 0
 	progress_origin = position
 	retried = false
-	return say("Following you." if order == "follow" else "Moving to my station. I'll report when I'm in position.")
+	if order == "evacuate":
+		return ""
+	return say("Following you." if order == "follow" else "On my way.")
 
 func follow_target() -> Vector3:
 	# Follow translation, never camera yaw. Retain a world-space stopping point
@@ -133,7 +143,9 @@ func _physics_process(delta: float) -> void:
 		if state == "travel_to_task":
 			state = "perform_task"
 			task_ready = true
-			say("In position. Station inspection ready; no power or gate changes yet.")
+			# Repair/access produce their own objective updates; readiness is on the HUD.
+			if task_id == "isolation":
+				say("Ready for isolation.")
 		return
 	if repath_time <= 0:
 		path = facility.route(position, destination)
