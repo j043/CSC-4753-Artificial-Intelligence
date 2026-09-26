@@ -208,6 +208,8 @@ func area_name(at: Vector3) -> String:
 func unlock_gate(index: int) -> void:
 	if index >= gates.size() or not is_instance_valid(gates[index]):
 		return
+	if has_meta("sounds"):
+		get_meta("sounds").cue("door")
 	var gate_body := gates[index]
 	remove_child(gate_body)
 	gate_body.queue_free()

@@ -4,8 +4,13 @@ const Facility = preload("res://scripts/facility.gd")
 const Player = preload("res://scripts/player.gd")
 const NPC = preload("res://scripts/npc.gd")
 const Progression = preload("res://scripts/progression.gd")
-const TitleLogo = preload("res://scripts/title_logo.gd")
 const Narrative = preload("res://scripts/narrative.gd")
+const Preferences = preload("res://scripts/settings.gd")
+const Soundscape = preload("res://scripts/soundscape.gd")
+const TitleLogo = preload("res://scripts/title_logo.gd")
+var preferences = Preferences.new()
+var settings_origin := "menu"
+var sounds: Node
 var narrative: Node
 var progress: Node
 var speaker: CharacterBody3D
@@ -31,6 +36,8 @@ var tour := false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	preferences.load_settings()
+	preferences.apply(self, true)
 	for binding in [["walk_forward", KEY_W], ["walk_back", KEY_S], ["walk_left", KEY_A], ["walk_right", KEY_D], ["sprint", KEY_SHIFT], ["interact", KEY_E], ["flashlight", KEY_F], ["pause", KEY_ESCAPE], ["journal", KEY_J]]:
 		if not InputMap.has_action(binding[0]):
 			InputMap.add_action(binding[0])
@@ -76,7 +83,7 @@ func _ready() -> void:
 	menu.add_theme_constant_override("separation", 14)
 	margin.add_child(menu)
 	show_menu()
-	print("Blackwell M4 ready")
+	print("Blackwell M5 ready")
 
 func label_at(offset: Vector2, size: int) -> Label:
 	var label := Label.new()
@@ -130,7 +137,7 @@ func button(text: String, callback: Callable) -> void:
 	item.pressed.connect(callback)
 	var parent: Container = choices if choices else menu
 	parent.add_child(item)
-	if (choices and choices.get_child_count() == 1) or (not choices and menu.get_child_count() == 3):
+	if text == "Resume" or (choices and choices.get_child_count() == 1) or (not choices and menu.get_child_count() == 3):
 		item.grab_focus()
 
 func show_menu() -> void:
@@ -148,8 +155,9 @@ func show_menu() -> void:
 	notice.text = ""
 	notice_queue.clear()
 	notice_time = 0
-	clear_menu("BLACKWELL: LAST SHIFT", "M4 - containment and evacuation\nWASD move / Mouse look / Shift sprint\nE interact or talk / F flashlight / Escape pause\nMeet Mara and Eli, restore power, isolate the chamber, and evacuate.")
+	clear_menu("BLACKWELL: LAST SHIFT", "Containment and evacuation\nWASD move / Mouse look / Shift sprint\nE interact or talk / F flashlight / Escape pause\nMeet Mara and Eli, restore power, isolate the chamber, and evacuate.")
 	button("Start - initial lockdown", start.bind(false))
+	button("Settings", show_settings)
 	button("Facility tour - gates open", start.bind(true))
 	button("Quit", func(): get_tree().quit())
 
@@ -167,6 +175,9 @@ func start(open_gates: bool) -> void:
 	progress.app = self
 	world.add_child(progress)
 	world.progression = progress
+	sounds = Soundscape.new()
+	world.add_child(sounds)
+	world.set_meta("sounds", sounds)
 	narrative = Narrative.new()
 	narrative.app = self
 	world.add_child(narrative)
@@ -185,6 +196,7 @@ func start(open_gates: bool) -> void:
 		world.npcs.append(npc)
 	notice_time = 0
 	notice.text = ""
+	preferences.apply(self)
 	resume()
 
 func resume() -> void:
@@ -215,9 +227,10 @@ func pause_game() -> void:
 	volume.min_value = 0
 	volume.max_value = 100
 	volume.value = AudioServer.get_bus_volume_linear(0) * 100
-	volume.value_changed.connect(func(value: float): AudioServer.set_bus_volume_linear(0, value / 100.0))
+	volume.value_changed.connect(func(value: float): change_setting("volume", value / 100.0))
 	menu.add_child(volume)
 	button("Resume", resume)
+	button("Settings", show_settings)
 	if not narrative.checkpoint.is_empty():
 		button("Restart Checkpoint", retry_checkpoint)
 	button("Return to Menu", show_menu)
@@ -228,7 +241,9 @@ func _input(event: InputEvent) -> void:
 		show_journal()
 		get_viewport().set_input_as_handled()
 	if event.is_action_pressed("pause") and not event.is_echo():
-		if mode in ["journal", "decision"]:
+		if mode == "settings":
+			close_settings()
+		elif mode in ["journal", "decision"]:
 			resume()
 		elif mode == "dialogue":
 			close_dialogue()
@@ -351,7 +366,10 @@ func _process(delta: float) -> void:
 	if not tour:
 		narrative.tick(delta)
 		if mode == "play":
+			var old_stage: int = progress.stage
 			progress.tick()
+			if progress.stage != old_stage:
+				sounds.cue("objective")
 		if progress.stage == 6:
 			hud.text += "\nEVACUATION: %03d seconds | Both survivors must board" % ceili(narrative.remaining)
 		else:
@@ -457,3 +475,56 @@ func retry_checkpoint() -> void:
 		if child.get_meta("object_id", "") == "Maintenance workbench":
 			child.set_meta("prompt", "Inspect empty component tray")
 	show_decision()
+
+func show_settings() -> void:
+	if mode != "settings":
+		settings_origin = mode
+	mode = "settings"
+	get_tree().paused = true
+	clear_menu("SETTINGS", "Changes apply immediately and persist between games.\nNo head bob or camera shake is used.")
+	setting_slider("Mouse sensitivity", "sensitivity", 0.25, 2.5, 0.05)
+	setting_slider("Master volume", "volume", 0, 1, 0.05)
+	setting_slider("Brightness", "brightness", 0.6, 1.6, 0.05)
+	var quality := CheckButton.new()
+	quality.text = "Low quality (disable dynamic shadows)"
+	quality.button_pressed = preferences.low
+	quality.toggled.connect(func(value: bool): change_setting("low", value))
+	menu.add_child(quality)
+	var resolution := OptionButton.new()
+	for size in Preferences.SIZES:
+		resolution.add_item("%d x %d" % [size.x, size.y])
+	resolution.selected = preferences.resolution
+	resolution.item_selected.connect(func(index: int): change_setting("resolution", index))
+	menu.add_child(resolution)
+	button("Back", close_settings)
+
+func setting_slider(title: String, key: String, minimum: float, maximum: float, step: float) -> void:
+	var label := Label.new()
+	label.text = "%s: %.2f" % [title, preferences.get(key)]
+	menu.add_child(label)
+	var slider := HSlider.new()
+	slider.min_value = minimum
+	slider.max_value = maximum
+	slider.step = step
+	slider.value = preferences.get(key)
+	slider.value_changed.connect(func(value: float):
+		label.text = "%s: %.2f" % [title, value]
+		change_setting(key, value))
+	menu.add_child(slider)
+	if key == "sensitivity":
+		slider.grab_focus()
+
+func change_setting(key: String, value: Variant) -> void:
+	preferences.set(key, value)
+	preferences.apply(self, key == "resolution")
+	var error: Error = preferences.save_settings()
+	if error != OK:
+		show_notice("Settings could not be saved on this computer; current changes still apply.")
+
+func close_settings() -> void:
+	if settings_origin == "menu":
+		show_menu()
+	else:
+		var saved_previous := previous_mode
+		pause_game()
+		previous_mode = saved_previous

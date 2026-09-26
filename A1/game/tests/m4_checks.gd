@@ -18,6 +18,7 @@ func frames(count: int) -> void:
 func run() -> void:
 	app = load("res://scenes/main.tscn").instantiate()
 	root.add_child(app)
+	app.preferences.path = "res://../builds/m4-test-settings.cfg"
 	app.start(false)
 	await frames(5)
 	check(app.narrative.checkpoint.is_empty(), "No checkpoint at new game")

@@ -5,7 +5,7 @@ signal npc_selected(npc: CharacterBody3D)
 var controls_enabled := true
 const WALK_SPEED := 3.4
 const SPRINT_SPEED := 5.6
-const SENSITIVITY := 0.0023
+var sensitivity := 0.0023
 var camera: Camera3D
 var light: SpotLight3D
 var ray: RayCast3D
@@ -44,8 +44,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if get_tree().paused or not controls_enabled:
 		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		rotate_y(-event.relative.x * SENSITIVITY)
-		camera.rotation.x = clampf(camera.rotation.x - event.relative.y * SENSITIVITY, -1.4, 1.4)
+		rotate_y(-event.relative.x * sensitivity)
+		camera.rotation.x = clampf(camera.rotation.x - event.relative.y * sensitivity, -1.4, 1.4)
 	if event.is_action_pressed("flashlight"):
 		light.visible = not light.visible
 	if event.is_action_pressed("interact"):
