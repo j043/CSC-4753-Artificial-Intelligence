@@ -98,3 +98,11 @@ Added procedural walking/sprinting footsteps and an eerie layered background dro
 ## M5 additions approved - September 26, 2026
 
 The user approved the final visuals and sound and requested that these additions be committed as M5 work before continuing M6. This approval covers removed hovering labels, sliding doors, restored approaching humanoid sightings, three-second chase grace, louder alarm, footsteps, and creepy ambience. Earlier M6 candidate packaging describes preparatory acceptance work, not completion of M6. M6 resumes from this approved M5 baseline; first-time-player timing, full-route performance, extracted offline playthrough, and second-machine evidence remain open.
+
+
+M6 continued from approved M5 commit 281996e: added acceptance handoff, repeatable ZIP integrity/content verification and SHA-256 output, and a rendered Low/720p integrated progression profile. All 37 checks pass; 71.94 seconds of gameplay samples averaged 118.7 FPS on the development laptop. Human/external acceptance remains explicitly pending.
+
+
+## M6 finalized - September 26, 2026
+
+User confirmed successful offline play and a 16-minute new-player completion on the development machine, meeting the planned duration target for that run. Familiar-player runs took about five minutes. Another computer was unavailable. Finalized README, acceptance record, verification history, demo checklist, and asset credits; packaged complete source, Windows release, prompts, and required documents with integrity/content verification and checksum. Manual submission remains with the user.

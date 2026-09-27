@@ -335,3 +335,9 @@ awesome!!! one last thing: can we increase the volume of the alarm sound at the 
 
 [43] September 26, 2026 | Approve M5 additions, commit, and begin M6
 awesome, that looks and sounds fantastic. lets commit this work as additions to the m5 milestone, and then get to work on m6
+
+[44] September 26, 2026 | Successful five-minute playthroughs and unavailable second computer
+we cant do another computer test, but i just did a few full playthroughs and everything worked great. it took about 5 minutes. what else needs to be done
+
+[45] September 26, 2026 | Offline and 16-minute new-player success, finalize and commit
+everything worked offline, a new player using my machine took about 16 minutes to complete the game. lets wrap up documentation and commit

@@ -15,12 +15,12 @@ Build: Blackwell M6 submission candidate, September 26, 2026. These boxes record
 - [ ] Pause during evacuation and confirm timer/pursuit freeze. Test volume/mute, brightness, sensitivity, quality, and resolution. Relaunch to check preference persistence.
 - [ ] Start a new game after endings. Confirm initial gates, component, NPC commands, notes, and objectives reset.
 
-## Remaining acceptance evidence
+## Acceptance results and submission
 
-- [ ] Record a first-time player's elapsed time, confusion points, and whether they finish without outside guidance. The 15-25 minute target is not verified.
-- [ ] Record full-route Low-preset performance and any blockers; existing FPS evidence consists of short samples.
-- [ ] Complete a full playthrough of the extracted export with networking disconnected.
-- [ ] Test another Windows x86_64 computer if available; record hardware/results or explicitly record unavailable.
+- [x] User reports a new player completed the game in approximately 16 minutes on September 26, meeting the duration target. Assistance/confusion details were not separately reported.
+- [x] Record rendered automated progression performance (118.7 FPS mean at Low/720p) and user reports of successful full playthroughs. Continuous human-route FPS was not measured.
+- [x] User confirms offline success; separate extracted-executable startup is also verified. Exact offline launch method was not specified.
+- [x] Second Windows computer unavailable; recorded as not tested per user confirmation.
 - [ ] Confirm the professor's platform (Windows is assumed), review deliverables, and manually submit before September 28 at 7:00 a.m. Central.
 
 - [ ] Watch maintenance and both gate panels slide apart on unlock; verify red indicators turn green. Inspect brief approaching humanoid sightings and the three-second pursuit head start.

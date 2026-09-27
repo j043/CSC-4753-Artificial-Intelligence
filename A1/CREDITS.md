@@ -25,3 +25,8 @@ Facility hum (60 Hz), gate cue (160 Hz), and objective cue (660 Hz) are original
 ## Facility / human art pass and shadow chase
 
 Original code-authored 3D art in `industrial_art.gd` adds wall cladding, floor joints/markings, ceiling beams and luminaires, pipes, coolant tanks, gauges, terminals, maintenance tools/component, lockers, lift doors, and a sealed reactor chamber behind glass. `npc_visual.gd` builds stylized humans with faces, hair/headwear, uniform/vest/tool details and animated limbs. `shadow.gd` reuses the original silhouette style for sightings and pursuit. All use Godot built-in meshes/materials/fonts; no downloaded assets or additional third-party licenses.
+
+
+## Final M5 additions / M6 audit
+
+Sliding security doors are original procedural geometry in `game/scripts/sliding_door.gd`. The restored humanoid shadow is original geometry in `shadow.gd`. The final background drone, dissonant tones, whisper-like modulation, and boot-impact/scuff/resonance footsteps are synthesized in `soundscape.gd`, replacing the earlier single-tone hum; no external recordings or assets were added. The alarm remains synthesized in `narrative.gd`. Included engine/component notices remain applicable. No third-party art/audio attribution is required beyond the bundled engine notices.

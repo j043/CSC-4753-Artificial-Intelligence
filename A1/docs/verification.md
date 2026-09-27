@@ -297,3 +297,32 @@ Validation: shadow suite 16/16 (including approach, shorter lifetime, pause, act
 Raised the evacuation alarm from -16 dB to -6 dB. Added original synthesized boot impacts with scuff and metal resonance; cadence follows actual grounded movement, alternates pitch, and accelerates while sprinting. Stationary movement, pushing into a wall, and pause do not generate footsteps. Replaced the quiet single-tone hum with an eight-second seamless low drone, dissonant swelling tones, and whisper-like modulation. Cached procedural streams avoid regeneration during checkpoint retries. All audio uses Master volume/mute and the world's pause lifecycle.
 
 Validation: eight audio behavior checks and eleven settings checks pass, exit 0. These verify triggering, cadence, wall/idle/pause behavior, loop configuration, alarm gain, and Master routing; subjective listening on the user's speakers/headphones remains a manual check. Windows export and submission archive refreshed. Existing sandbox certificate/editor-preference diagnostics remain.
+
+
+## M6 from approved M5 commit 281996e - September 26, 2026
+
+User confirmed the final visuals and audio look/sound good, then authorized committing them as M5 additions. M6 now has an explicit evidence/remaining-work table in m6-acceptance.md and reproducible packaging via package_submission.py.
+
+Rendered integrated progression profile:
+
+```text
+Approved M5 baseline: 281996e
+Automated M3 route, rendered Low 1280x720, VSync off. Scripted player relocations; real NPC traversal. Excludes menus/paused frames. Not a human full-route benchmark or first-playthrough timing.
+CPU: 12th Gen Intel(R) Core(TM) i7-12650H
+GPU: NVIDIA GeForce RTX 3050 Ti Laptop GPU
+Frames: 8540; gameplay sample seconds: 71.94
+Mean FPS: 118.7; median frame ms: 8.33; p95 frame ms: 8.33; p99 frame ms: 8.71; worst frame ms: 144.39
+Progression checks: 37; failures: 0
+```
+
+All 37 progression checks passed against the approved code, including real NPC evacuation and new-game resets. Reported timings use engine process-frame deltas over unpaused gameplay, not independent GPU timings. Shader-cache write diagnostics and the known certificate-store diagnostic occurred under the sandbox; this was not a diagnostic-free run. Human route timing, offline release playthrough, and second-machine testing remain pending.
+
+
+## User M6 playthrough report - September 26, 2026
+
+User reports several successful full playthroughs, everything working great, with approximately five-minute completion time. This is a familiar-player report, not a verified first-time-player timing; it is shorter than the 15?25 minute design target. Exact tested build/launch method, disconnected-network status, and coverage of individual endings/failure paths were not specified. Second-computer testing is unavailable, explicitly confirmed by the user; record as not tested, not an unresolved request for another machine. Remaining handoff work includes extracted offline release confirmation, timing-target disposition, final documentation/package review, M6 commit, and manual submission.
+
+
+## Final M6 user acceptance - September 26, 2026
+
+User confirms everything worked offline and a new player on the same machine completed the game in approximately 16 minutes. This satisfies the 15-25 minute pacing target for one observed new-player run. Earlier approximately five-minute runs were familiar-player runs. User authorized finalizing documentation and committing. Several full playthroughs and final visuals/audio were approved. Second-computer testing was unavailable, not failed. Offline launch method, assistance details, and individual ending/failure coverage were not separately specified; do not infer them. Documentation and submission packaging are finalized with these limitations; manual submission remains outstanding.

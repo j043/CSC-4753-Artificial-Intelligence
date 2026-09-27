@@ -4,7 +4,9 @@ A1 for CSC-4753 Artificial Intelligence. See [the specification](spec.md) for sc
 
 ## Current status
 
-M6 submission candidate, September 26, 2026. The complete game includes six objectives, two survivors, cooperative tasks, two endings, checkpoint retry, clues, a lethal evacuation chase, industrial scenery, and persistent settings. Floating item/room captions have been removed. Automated progression, retry, settings, and shadow checks pass. Timed first-time-player testing, full-run performance measurement, and second-machine testing remain unverified; see docs/verification.md.
+M6 documentation and acceptance are finalized for submission on September 26, 2026. Approved M5 baseline: `281996e`. See [the acceptance record](docs/m6-acceptance.md) for evidence and limitations.
+
+The completed game includes six objectives, two survivors, cooperative tasks, two endings, checkpoint retry, clues, a lethal evacuation chase, industrial scenery, and persistent settings. Automated checks pass. The user reports successful offline play and several complete playthroughs; a new player completed the game in approximately 16 minutes on the same computer, meeting the 15-25 minute target. Another computer was unavailable and was not tested.
 
 ## For the professor: run the submitted game
 
@@ -51,7 +53,7 @@ Recorded checks pass: 29 M1, 46 M2, 37 M3, 41 M4, 11 M5, and 15 shadow/chase che
 8. Use **Retry Checkpoint** from an ending/failure screen or **Restart Checkpoint** from pause. Try **Trust intercom / RECONNECT**, then confirm, for the breach ending. Let the timer expire to test the separate failure screen. Retry restores ready NPCs, open gates, clues, and a fresh inactive timer. New Game clears the checkpoint.
 9. Optional clues are labeled **Voice warning** in security, **Incident note** in maintenance, and **Isolation protocol** in observation. E reads only the targeted book; J opens the list of collected notes to reread. Journal access is disabled during evacuation.
 
-Exchanges wait until conversations and earlier subtitles finish. Each subtitle types out and remains for three seconds; radio labels allow story delivery while moving away. The 120-second countdown is provisional; the final 15-25 minute first-playthrough target is not yet verified.
+Exchanges wait until conversations and earlier subtitles finish. Each subtitle types out and remains for three seconds; radio labels allow story delivery while moving away. Evacuation uses a 120-second countdown and three-second shadow head start. One new-player playthrough took approximately 16 minutes; familiar-player runs took approximately five minutes.
 
 ## For the developer: edit, run, and export
 
@@ -74,12 +76,14 @@ Running the project with **F5** uses the current source. Launching `Blackwell.ex
 
 ### Prepare the submission ZIP
 
+After exporting, run `python A1/package_submission.py` from the repository root to rebuild and verify the candidate and its SHA-256 sidecar. This command packages the current export; it does not re-export Godot.
+
 1. Confirm the professor's operating system and export the appropriate desktop build. Update the professor's launch instructions if the platform or file layout changes.
 2. Include the `A1/` folder with this README, complete `game/` source, `builds/` executable and companion files, prompt log, credits and required licenses, and the documents linked below.
 3. Exclude local `.tools/`, generated `game/.godot/` caches, and previous submission archives.
 4. Extract the ZIP into a separate folder and follow the professor's instructions. Verify that all runtime files are present and the game works offline without development tools. Record the actual checks and any limitations in `docs/verification.md`.
 
-The engine uses Compatibility rendering. Short rendered Low/720p samples on an i7-12650H and RTX 3050 Ti laptop exceeded 30 FPS; full-playthrough profiling, pacing, and second-machine checks remain open. See the verification record for methodology and limits.
+The engine uses Compatibility rendering. A rendered automated Low/720p progression run averaged 118.7 FPS over 71.94 seconds on an i7-12650H / RTX 3050 Ti laptop. This uses scripted player relocations and real NPC traversal, not continuous human-route profiling. User playthroughs reported no blockers; another computer was unavailable. See the verification record for methodology and environment diagnostics.
 
 ## Deliverables
 
@@ -89,4 +93,4 @@ The engine uses Compatibility rendering. Short rendered Low/720p samples on an i
 - [Verification record](docs/verification.md)
 - [Demonstration checklist](docs/demo-checklist.md)
 
-Deadline: September 28, 2026, 7:00 a.m. US Central. Final source, exported build, and documentation will be packaged in a ZIP for manual submission.
+Deadline: September 28, 2026, 7:00 a.m. US Central. The final ZIP contains source, Windows build, and documentation. Manual submission remains the user's responsibility; packaging and committing do not submit it.
