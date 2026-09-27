@@ -251,3 +251,49 @@ Validation: M2 NPC/navigation/dialogue suite passes with zero failures. Inspecte
 Maintenance now starts behind a physical door that blocks player collision and NPC navigation until both Mara and Eli have been spoken to. Either introduction order works; repeated conversations with one NPC do not unlock it. Opening removes the door and rebuilds navigation. New games relock it; facility tours and restored isolation checkpoints keep access open. Reading a book shows only that note and Return to facility; J retains the collected-note index.
 
 Validation: all 37 updated M3 checks and 41 updated M4 checks pass, including blocked player movement, locked/open navigation, repeated and reversed introductions, new-game reset, actual repair/access/evacuation travel, single-note pickup views, journal index, and checkpoint retries. Inspected locked-door and single-note screenshots. Windows EXE/PCK exported successfully. Existing certificate-store/editor-settings sandbox diagnostics remain; no GDScript errors in passing checks.
+## M6 submission candidate - September 26, 2026
+
+Removed original floating room/item/gate/station captions and their stale update code. HUD room names, interaction prompts, NPC name/activity labels, industrial signs, and book cover details remain. Inspected the newly rendered workshop view; no hovering workbench caption remains. Refreshed Windows EXE/PCK and replaced the outdated demonstration checklist with the current route and explicit human acceptance steps.
+
+| Check | Result |
+| --- | --- |
+| M1 movement/collision/traversal regression | Exit 0, zero failed checks; two ObjectDB instances reported at shutdown by this test harness. |
+| M2 dialogue/navigation/commands regression | Exit 0, zero failed checks. |
+| M3 real progression and evacuation | 37 checks, zero failures. Includes both introduction orders and maintenance gating. |
+| M4 decisions/checkpoints/journal/reset | 41 checks, zero failures. |
+| M5 persistent settings/pause | 11 checks, zero failures. |
+| Shadow sightings/chase/retry/lift safety | 15 checks, zero failures. |
+| Rendered art capture | Compatibility renderer on RTX 3050 Ti; exit 0. Workshop image inspected. |
+| Windows release export | Exit 0; refreshed EXE/PCK. |
+| Clean source copy | Copied source without .godot cache into a separate staging directory; Godot 4.7.2 import and headless startup both exit 0, reporting Blackwell M6 ready. No missing assets or GDScript errors observed. |
+
+Environment limitations: sandboxed engine runs report inability to read the Windows certificate store; editor/export runs also cannot save editor preferences outside the workspace. The first M3 invocation could not write its default engine log, and initial M4/M5 relative log paths were rejected. These diagnostics are not counted as game script failures. This is not evidence of a wholly diagnostic-free run. Local M1/M2/shadow/import/export logs are in ignored builds/m6-*.log files.
+
+The submission candidate includes assignment-root README, specification, full source/tests, current prompt log, prompt-preservation instructions, credits/licenses, current demo checklist, development summary, and Windows EXE/PCK. Local tools, source import caches, old builds/archives, and developer logs are excluded. Packaging and extracted-startup evidence follows below.
+
+Remaining human acceptance: timed first-time-player run (15-25 minutes unverified), full-playthrough performance and blocker check, disconnected-network exported playthrough, display/audio/settings review, and another Windows computer if available. Windows remains the user's assumed professor platform, not confirmed. Prior successful user playthroughs of both endings are recorded above; they do not substitute for a fresh extracted M6 playthrough. Manual submission is still required.
+
+Archive audit: Blackwell-A1-M6.zip contains 64 files and passes ZIP CRC verification. Extracted to submission/m6-extracted/ and launched the packaged Blackwell.exe directly from its own directory with --headless --quit-after 120: exit 0, Blackwell M6 ready. The same certificate-store diagnostic appears. This verifies standalone startup on the development computer, not rendered exported gameplay or another computer. Final archive incorporates this evidence; executable and PCK are unchanged from the extracted startup test.
+
+
+## Sliding doors and spider entity - September 26, 2026
+
+All three locked entrances now use split steel sliding panels, hazard strips, recessed trim, and red lock indicators that turn green on unlock. Leaves retract sideways over 1.15 seconds with physical collision, and pause freezes their motion. Tour/checkpoint doors initialize fully open. Navigation blockers retain the existing progression rules and inspection prompts.
+
+The shadow now uses a shared original eight-legged creature mesh for random sightings, the chamber appearance, and pursuit: broad dark carapace, tall pointed legs, fangs, six glowing eyes, idle movement, and a scuttling gait that turns with travel. Chase speed, grace period, capture rules, and lift safety remain intact.
+
+Validation: eight new door/spider checks, M3's 37 checks, M4's 41 checks, and all 15 shadow checks pass (101 total). Rendered closed/open door and frontal creature captures inspected. Windows EXE/PCK refreshed. The initial new test used an incorrect resume method name; corrected to the existing resume method before the passing run. Engine sandbox diagnostics remain as documented above. Updated archive replaces the earlier 64-file candidate; archive validation and extracted startup are checked again for this build.
+
+
+## Humanoid restoration and faster appearances - September 26, 2026
+
+Restored the original dark humanoid torso/head silhouette for sightings, chamber appearance, and pursuit; removed the unused spider visual. Harmless appearances approach the player at 1.8 m/s, stop before obstacles or close contact, and vanish after 0.9 seconds. Chamber glimpses use the same movement/lifetime. Evacuation pursuit now has a three-second grace period; Mara's warning and README match. Sliding doors remain unchanged.
+
+Validation: shadow suite 16/16 (including approach, shorter lifetime, pause, actual sprint escape with the reduced grace, and retry); M4 41/41; door/humanoid suite 8/8. All exit 0. Door test reported two ObjectDB instances at teardown; certificate/editor-preference sandbox diagnostics persist. Windows export refreshed successfully. Submission ZIP refreshed from current source/build and CRC/content checked; prior spider package is superseded. Final human playtest remains outstanding.
+
+
+## Audio polish - September 26, 2026
+
+Raised the evacuation alarm from -16 dB to -6 dB. Added original synthesized boot impacts with scuff and metal resonance; cadence follows actual grounded movement, alternates pitch, and accelerates while sprinting. Stationary movement, pushing into a wall, and pause do not generate footsteps. Replaced the quiet single-tone hum with an eight-second seamless low drone, dissonant swelling tones, and whisper-like modulation. Cached procedural streams avoid regeneration during checkpoint retries. All audio uses Master volume/mute and the world's pause lifecycle.
+
+Validation: eight audio behavior checks and eleven settings checks pass, exit 0. These verify triggering, cadence, wall/idle/pause behavior, loop configuration, alarm gain, and Master routing; subjective listening on the user's speakers/headphones remains a manual check. Windows export and submission archive refreshed. Existing sandbox certificate/editor-preference diagnostics remain.

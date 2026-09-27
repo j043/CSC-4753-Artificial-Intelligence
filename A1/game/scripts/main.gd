@@ -85,7 +85,7 @@ func _ready() -> void:
 	menu.add_theme_constant_override("separation", 14)
 	margin.add_child(menu)
 	show_menu()
-	print("Blackwell M5 ready")
+	print("Blackwell M6 ready")
 
 func label_at(offset: Vector2, size: int) -> Label:
 	var label := Label.new()
@@ -180,6 +180,7 @@ func start(open_gates: bool) -> void:
 	sounds = Soundscape.new()
 	world.add_child(sounds)
 	world.set_meta("sounds", sounds)
+	player.stepped.connect(sounds.step)
 	narrative = Narrative.new()
 	narrative.app = self
 	world.add_child(narrative)
@@ -450,9 +451,6 @@ func retry_checkpoint() -> void:
 	start(true)
 	tour = false
 	world.tour = false
-	for child in world.get_children():
-		if child is Label3D:
-			child.text = child.text.replace("TOUR OPEN", "OPEN")
 	progress.stage = 5
 	progress.component = "consumed"
 	world.set_component_visible(false)

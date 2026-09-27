@@ -1,5 +1,7 @@
 extends CharacterBody3D
 signal interacted(message: String)
+signal stepped(sprinting: bool)
+var step_distance := 0.0
 signal object_selected(target: Object)
 signal npc_selected(npc: CharacterBody3D)
 var controls_enabled := true
@@ -66,6 +68,7 @@ func interaction_target() -> Object:
 func _physics_process(delta: float) -> void:
 	if not controls_enabled:
 		velocity = Vector3.ZERO
+		step_distance = 0.0
 		return
 	var direction := Input.get_vector("walk_left", "walk_right", "walk_forward", "walk_back")
 	var movement := transform.basis * Vector3(direction.x, 0, direction.y)
@@ -76,4 +79,14 @@ func _physics_process(delta: float) -> void:
 		velocity.y -= 18.0 * delta
 	else:
 		velocity.y = 0
+	var before := global_position
 	move_and_slide()
+	var traveled := Vector2(global_position.x - before.x, global_position.z - before.z).length()
+	if is_on_floor() and traveled > 0.005:
+		step_distance += traveled
+		var stride := 1.65 if Input.is_action_pressed("sprint") else 1.5
+		if step_distance >= stride:
+			step_distance -= stride
+			stepped.emit(Input.is_action_pressed("sprint"))
+	else:
+		step_distance = 0.0

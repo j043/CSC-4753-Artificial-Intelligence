@@ -82,3 +82,19 @@ Added random exploration sightings and a lethal, physically navigated shadow cha
 ## September 26 presentation and interaction follow-up
 
 The user approved the darker facility, floor-book journals, title logo, long hair, custom angular character meshes, and the maintenance/journal interaction refinements. Maintenance now unlocks only after meeting both survivors; pickup views show one note, while J retains the collected-note index. Updated M3/M4 checks pass (37 and 41), and the Windows EXE/PCK was refreshed. Work was committed in separate visual, settings/audio, shadow, and access/journal groups, followed by documentation and the verbatim prompt record. Remaining work is M6 acceptance and final packaging, including confirming the target platform, longer playthrough/performance checks, and refreshing the final distributable archive from the latest source. The older standalone M5 ZIP predates these follow-up changes.
+## M6 acceptance and packaging - September 26, 2026
+
+Removed the original floating item/room labels and associated gate/station captions, preserving HUD guidance, target prompts, NPC labels, and industrial art signage. Refreshed the Windows release. M1/M2 regressions pass; progression, checkpoint/journal, settings, and shadow suites total 104 passing checks. A clean source copy imports and starts with Godot 4.7.2. Updated README and replaced historical demo instructions with the current playable route and remaining human checks. Prepared the source-and-Windows submission candidate under submission/Blackwell-A1-M6.zip; see verification.md for archive/startup results and environment diagnostics. First-time-player timing, full-route performance, a disconnected-network exported playthrough, and second-machine evidence remain open. No submission or commit is implied by packaging.
+
+
+Added animated industrial sliding doors for maintenance and both gates, plus a shared large eight-legged shadow with fangs, glowing eyes, and a scuttling gait. Verified door animation/pause/collision, progression, checkpoints, and chase (101 checks); refreshed the Windows build and submission candidate.
+
+
+Restored the original humanoid shadow at user request. Sightings now approach briefly and vanish after 0.9 seconds; evacuation grace reduced to three seconds. Updated cues/documentation, passed 65 relevant checks, and refreshed Windows/submission artifacts.
+
+
+Added procedural walking/sprinting footsteps and an eerie layered background drone; increased the final alarm by 10 dB. Audio and settings checks pass (19 checks). Refreshed build/submission; final listening balance awaits user playtest.
+
+## M5 additions approved - September 26, 2026
+
+The user approved the final visuals and sound and requested that these additions be committed as M5 work before continuing M6. This approval covers removed hovering labels, sliding doors, restored approaching humanoid sightings, three-second chase grace, louder alarm, footsteps, and creepy ambience. Earlier M6 candidate packaging describes preparatory acceptance work, not completion of M6. M6 resumes from this approved M5 baseline; first-time-player timing, full-route performance, extracted offline playthrough, and second-machine evidence remain open.

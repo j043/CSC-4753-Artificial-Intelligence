@@ -320,3 +320,18 @@ can the maintence room be closed until you speak to mara and eli? and can we rem
 
 [38] September 26, 2026 | Commit progress in focused chunks
 this looks great. ill be back to finish this up. lets commit this in a few focused chunks! 
+
+[39] September 26, 2026 | Begin M6 and remove hovering labels
+hi hi! im ready to close this assignment out, so lets finish up the work we need to do for m6. but first, lets remove the hovering text labels above the game items and rooms
+
+[40] September 26, 2026 | Sliding security doors and spider-like shadow
+one last thing, can we make the locked doors look like locked, sliding doors? and have them side open when unlocked? and also can we make the shadow entity big and scary and spider-like
+
+[41] September 26, 2026 | Restore humanoid shadow and shorten appearances
+THAT LOOKS AWESOME! i actually really miss the old entity though, can we revert it back to a humanoid shape? and lets also make it move towards you when it appears? we can make it disappear more quickly too. also, towards the end when the entity appears in the chamber, lets shorten the time until it moves to 3 seconds
+
+[42] September 26, 2026 | Louder alarm, footsteps, and creepy ambience
+awesome!!! one last thing: can we increase the volume of the alarm sound at the end, add footsteps when walking, and add a creepy ambience to the background?
+
+[43] September 26, 2026 | Approve M5 additions, commit, and begin M6
+awesome, that looks and sounds fantastic. lets commit this work as additions to the m5 milestone, and then get to work on m6

@@ -4,7 +4,7 @@ A1 for CSC-4753 Artificial Intelligence. See [the specification](spec.md) for sc
 
 ## Current status
 
-M5 also includes random harmless shadow sightings and a lethal evacuation chase, plus a detailed industrial art pass and animated stylized human NPCs. M5 adds persistent mouse sensitivity, volume, brightness, quality, and resolution settings to the approved M4 game. Low quality disables dynamic shadows; the flashlight remains active. A quiet facility hum and distinct gate/objective cues accompany the existing alarm. The user has played both M4 endings successfully. M5 settings/regression tests and short rendered performance samples pass; final pacing, second-machine testing, and submission audit remain M6 work.
+M6 submission candidate, September 26, 2026. The complete game includes six objectives, two survivors, cooperative tasks, two endings, checkpoint retry, clues, a lethal evacuation chase, industrial scenery, and persistent settings. Floating item/room captions have been removed. Automated progression, retry, settings, and shadow checks pass. Timed first-time-player testing, full-run performance measurement, and second-machine testing remain unverified; see docs/verification.md.
 
 ## For the professor: run the submitted game
 
@@ -19,7 +19,7 @@ The current export targets **Windows x86_64**. The user assumes the professor us
 3. Double-click **`Blackwell.exe`**. Keep **`Blackwell.pck`** in the same folder; it contains the game's packaged resources.
 4. Select **Start - initial lockdown** to explore with the initial gates locked, or **Facility tour - gates open** to walk all six areas. Press Escape for Resume, Return to Menu, or Quit.
 
-The final ZIP will include the executable, packaged resources, and any other required runtime files together. A final source-and-game submission ZIP is not available yet. The standalone M5 playtest archive is `builds/Blackwell-Windows-M5.zip`; extract it and launch `Blackwell.exe`. For the current local M5 build, open `builds/windows/` beside this README and launch the executable there. A source-only Git checkout does not include generated builds.
+The submission candidate is `submission/Blackwell-A1-M6.zip` in the working repository. It includes source, the Windows executable and resources, documentation, prompts, credits, and licenses. Older M5 archives are obsolete. A source-only Git checkout does not include generated builds or archives.
 
 ### Controls and graphics
 
@@ -47,7 +47,7 @@ Recorded checks pass: 29 M1, 46 M2, 37 M3, 41 M4, 11 M5, and 15 shadow/chase che
 4. Ask Eli to authorize observation access. He goes to control; his radio confirmation opens Gate B.
 5. Enter coolant and read the imitation warning. Ask both survivors to go to their isolation stations in observation. You can use Follow me to bring survivors along before assigning stations.
 6. Check both READY indicators, then use E on the chamber console. This saves an in-memory checkpoint and presents the trust decision. Early attempts explain who is missing; Wait cancels readiness and reassignment restores it.
-7. Choose **Trust survivors / ISOLATE** to start the alarm, 120-second countdown, and shadow chase. You get a six-second head start. **Hold Shift to sprint** south through coolant/control/security and west into the lift. The shadow is faster than walking and slower than sprinting. Reaching the lift interior makes you safe while both survivors board; then activate the lift. If the shadow catches you outside, use Retry Checkpoint from the death screen.
+7. Choose **Trust survivors / ISOLATE** to start the alarm, 120-second countdown, and shadow chase. You get a three-second head start. **Hold Shift to sprint** south through coolant/control/security and west into the lift. The shadow is faster than walking and slower than sprinting. Reaching the lift interior makes you safe while both survivors board; then activate the lift. If the shadow catches you outside, use Retry Checkpoint from the death screen.
 8. Use **Retry Checkpoint** from an ending/failure screen or **Restart Checkpoint** from pause. Try **Trust intercom / RECONNECT**, then confirm, for the breach ending. Let the timer expire to test the separate failure screen. Retry restores ready NPCs, open gates, clues, and a fresh inactive timer. New Game clears the checkpoint.
 9. Optional clues are labeled **Voice warning** in security, **Incident note** in maintenance, and **Isolation protocol** in observation. E reads only the targeted book; J opens the list of collected notes to reread. Journal access is disabled during evacuation.
 
@@ -70,7 +70,7 @@ Local tooling, when downloaded by Codex, lives in the ignored `A1/.tools/` direc
 
 Install the **matching 4.7.2 export templates** through Godot's **Editor > Manage Export Templates**. Under **Project > Export**, select the included **Windows Desktop** preset and export to `A1/builds/windows/Blackwell.exe`. Keep the companion `Blackwell.pck` file with the executable. On the current development machine, the matching Windows x86_64 templates are already installed.
 
-Running the project with **F5** uses the current source. Launching `Blackwell.exe` uses the last exported version; export again after source changes to update it. The local M5 export is in `builds/windows/`, which is ignored by Git.
+Running the project with **F5** uses the current source. Launching `Blackwell.exe` uses the last exported version; export again after source changes to update it. The local M6 export is in `builds/windows/`, which is ignored by Git.
 
 ### Prepare the submission ZIP
 

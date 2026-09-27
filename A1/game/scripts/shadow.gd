@@ -1,7 +1,8 @@
 extends CharacterBody3D
 ## Local navigation/collision chase. Exploration sightings never deal damage.
 const SPEED := 4.1
-const GRACE := 6.0
+const GRACE := 3.0
+const SIGHTING_DURATION := 0.9
 var app: Control
 var rng := RandomNumberGenerator.new()
 var sighting: Node3D
@@ -100,9 +101,25 @@ func try_sighting() -> bool:
 	sighting = silhouette()
 	app.world.add_child(sighting)
 	sighting.position = candidates[rng.randi_range(0, candidates.size() - 1)]
-	sighting_time = 1.8
+	sighting.look_at(Vector3(app.player.position.x, sighting.position.y, app.player.position.z))
+	sighting_time = SIGHTING_DURATION
 	sightings += 1
 	return true
+
+func approach(figure: Node3D, delta: float) -> void:
+	# Harmless glimpses approach directly, stopping before walls or the player.
+	var toward: Vector3 = app.player.global_position - figure.global_position
+	toward.y = 0
+	if toward.length() <= 1.2:
+		return
+	var direction := toward.normalized()
+	var distance := minf(1.8 * delta, toward.length() - 1.2)
+	var origin := figure.global_position + Vector3.UP
+	var query := PhysicsRayQueryParameters3D.create(origin, origin + direction * (distance + 0.4), 1)
+	query.exclude = [get_rid(), app.player.get_rid()]
+	if get_world_3d().direct_space_state.intersect_ray(query).is_empty():
+		figure.global_position += direction * distance
+	figure.look_at(figure.global_position + direction)
 
 func _physics_process(delta: float) -> void:
 	if app.tour or app.mode != "play":
@@ -111,6 +128,7 @@ func _physics_process(delta: float) -> void:
 		if app.progress.stage >= 6:
 			return
 		if sighting_time > 0:
+			approach(sighting, delta)
 			sighting_time -= delta
 			if sighting_time <= 0:
 				clear_sighting()
@@ -139,6 +157,8 @@ func _physics_process(delta: float) -> void:
 		heading = path[index] - position
 		heading.y = 0
 		heading = heading.normalized()
+	if heading.length_squared() > 0.01:
+		body.rotation.y = lerp_angle(body.rotation.y, atan2(-heading.x, -heading.z), minf(1, delta * 10))
 	velocity.x = heading.x * SPEED
 	velocity.z = heading.z * SPEED
 	velocity.y = 0 if is_on_floor() else velocity.y - 18 * delta

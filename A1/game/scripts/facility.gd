@@ -1,11 +1,13 @@
 extends Node3D
 ## Deterministic graybox: 12 m rooms, 3 m openings, no moving crush hazards.
 const IndustrialArt = preload("res://scripts/industrial_art.gd")
+const SlidingDoor = preload("res://scripts/sliding_door.gd")
+var door_visuals: Array[Node3D] = []
+var maintenance_visual: Node3D
 var tour := false
 var progression: Node
 var gates: Array[StaticBody3D] = []
 var maintenance_door: StaticBody3D
-var maintenance_sign: Label3D
 var navigation: NavigationRegion3D
 var navigation_ready := false
 var npcs: Array[CharacterBody3D] = []
@@ -36,12 +38,12 @@ func _ready() -> void:
 		build_room(room)
 	gate(Vector3(0, 0, -18), "GATE A - EMERGENCY POWER", "Locked: emergency power must be restored by Mara.")
 	gate(Vector3(0, 0, -30), "GATE B - SECURITY ACCESS", "Locked: power restoration and Eli's authorization are required.")
+	maintenance_visual = door_assembly(Vector3(6, 0, -12), PI / 2)
 	if not tour:
-		maintenance_door = box(Vector3(6, 1.3, -12), Vector3(0.24, 2.6, 3), Color("544b32"))
+		maintenance_door = box(Vector3(6, 1.3, -12), Vector3(0.32, 2.8, 3), Color("544b32"))
+		maintenance_door.get_child(0).hide()
 		maintenance_door.set_meta("prompt", "Inspect maintenance access")
 		maintenance_door.set_meta("message", "Maintenance is locked. Speak to both Mara and Eli in security to unlock it.")
-	sign_text("MAINTENANCE / " + ("OPEN" if tour else "LOCKED - SPEAK TO MARA AND ELI"), Vector3(5.78, 2.85, -12), -PI / 2, 15)
-	maintenance_sign = get_child(get_child_count() - 1) as Label3D
 	prop(Vector3(-3.6, 0.65, -2.5), Vector3(2.6, 1.3, 1.2), "Security desk", "Facility lockdown active. Control room is north; evacuation lift is west.")
 	prop(Vector3(-3.6, 0.8, -14.5), Vector3(2.5, 1.6, 1.2), "Control console", "Maintenance workshop is east. Mara repairs power; Eli authorizes access here.")
 	prop(Vector3(15, 0.55, -14), Vector3(3, 1.1, 1.4), "Maintenance workbench", "Replacement component tray and emergency-power repair station. Ask Mara to repair after collection.")
@@ -49,15 +51,12 @@ func _ready() -> void:
 		var tank := box(Vector3(-4, 1.4, z), Vector3(1.5, 2.8, 1.5), Color(0.16, 0.4, 0.46))
 		tank.get_child(0).hide()
 	prop(Vector3(3.7, 0.65, -36), Vector3(1.7, 1.3, 2.5), "Chamber control console", "Isolation requires Mara at the maintenance panel and Eli at the security override.")
-	sign_text("MARA / MAINTENANCE PANEL", Vector3(-2, 2.2, -37), 0, 16)
-	sign_text("ELI / SECURITY OVERRIDE", Vector3(2, 2.2, -38.5), 0, 16)
 	var glass := box(Vector3(0, 1.8, -41.6), Vector3(7, 2.5, 0.2), Color(0.08, 0.17, 0.22))
 	var glass_material := StandardMaterial3D.new()
 	glass_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	glass_material.albedo_color = Color(0.17, 0.3, 0.34, 0.13)
 	glass_material.roughness = 0.2
 	glass.get_child(0).material_override = glass_material
-	sign_text("EXPERIMENTAL CHAMBER / SEALED", Vector3(0, 3.32, -41.2), 0, 25)
 	prop(Vector3(-15.5, 0.9, -2), Vector3(1, 1.8, 1), "Lift call panel", "Isolate the chamber, then board with both survivors to evacuate.")
 	box(Vector3(-16, 0.04, 1), Vector3(3, 0.08, 4), Color(0.6, 0.54, 0.27))
 	journal(Vector3(3.7, 0.06, -3), "Voice warning", -0.25)
@@ -128,14 +127,6 @@ func build_room(room: Array) -> void:
 			wall_piece(wall_center, direction, 7.2, 0.4, 3.3)
 		else:
 			wall_piece(wall_center, direction, 12, 3.5, 1.75)
-	# Wall signs stay out of the central sightline through successive doorways.
-	if center.z == -36:
-		sign_text(room[1], center + Vector3(-5.65, 2.65, 0), PI / 2, 27)
-		sign_text(room[2], center + Vector3(-5.65, 2.2, 0), PI / 2, 17)
-	else:
-		sign_text(room[1], center + Vector3(-3.65, 2.65, -5.65), 0, 27)
-		sign_text(room[2], center + Vector3(-3.65, 2.2, -5.65), 0, 17)
-	sign_text(room[1], center + Vector3(3.65, 2.65, 5.65), PI, 27)
 	var light := OmniLight3D.new()
 	light.position = center + Vector3(0, 3.1, 0)
 	light.omni_range = 6
@@ -183,28 +174,24 @@ func prop(at: Vector3, size: Vector3, title: String, message: String) -> void:
 	body.set_meta("object_id", title)
 	if title == "Maintenance workbench":
 		body.set_meta("prompt", "Collect replacement component / inspect workbench")
-	sign_text(title.to_upper(), at + Vector3(0, size.y / 2 + 0.3, 0), 0, 22)
+
+func door_assembly(at: Vector3, yaw := 0.0) -> Node3D:
+	var assembly := SlidingDoor.new()
+	assembly.position = at
+	assembly.rotation.y = yaw
+	add_child(assembly)
+	if tour:
+		assembly.open(true)
+	return assembly
 
 func gate(at: Vector3, title: String, message: String) -> void:
-	sign_text(title + (" / TOUR OPEN" if tour else " / LOCKED"), at + Vector3(0, 2.65, 0.2), 0, 25)
+	door_visuals.append(door_assembly(at))
 	if not tour:
-		var body := box(at + Vector3(0, 1.2, 0), Vector3(3, 2.4, 0.3), Color(0.52, 0.33, 0.14))
+		var body := box(at + Vector3(0, 1.2, 0), Vector3(3, 2.8, 0.32), Color(0.52, 0.33, 0.14))
+		body.get_child(0).hide()
 		body.set_meta("prompt", "Inspect " + title)
 		body.set_meta("message", message)
 		gates.append(body)
-
-func sign_text(text: String, at: Vector3, yaw: float, size: int) -> void:
-	var label := Label3D.new()
-	label.text = text
-	label.position = at
-	label.rotation.y = yaw
-	label.font_size = size
-	label.pixel_size = 0.008
-	label.outline_size = 7
-	label.no_depth_test = false
-	label.double_sided = false
-	label.visibility_range_end = 14.0
-	add_child(label)
 
 func area_name(at: Vector3) -> String:
 	for room in ROOMS:
@@ -218,21 +205,19 @@ func unlock_gate(index: int) -> void:
 		return
 	if has_meta("sounds"):
 		get_meta("sounds").cue("door")
+	door_visuals[index].open()
 	var gate_body := gates[index]
 	remove_child(gate_body)
 	gate_body.queue_free()
-	for child in get_children():
-		if child is Label3D and child.text.begins_with("GATE " + ("A" if index == 0 else "B")):
-			child.text = child.text.replace("LOCKED", "OPEN")
 	build_navigation()
 
 func unlock_maintenance() -> void:
 	if not is_instance_valid(maintenance_door):
 		return
+	maintenance_visual.open()
 	remove_child(maintenance_door)
 	maintenance_door.queue_free()
 	maintenance_door = null
-	maintenance_sign.text = "MAINTENANCE / OPEN"
 	if has_meta("sounds"):
 		get_meta("sounds").cue("door")
 	build_navigation()

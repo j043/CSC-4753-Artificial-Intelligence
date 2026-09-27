@@ -41,7 +41,7 @@ func choose(choice: String) -> void:
 		start_alarm()
 		app.shadow.start_chase()
 		app.resume()
-		app.show_notice("Mara Voss: It is coming! Hold Shift to sprint to the lift. You have six seconds before it moves.")
+		app.show_notice("Mara Voss: It is coming! Hold Shift to sprint to the lift. You have three seconds before it moves.")
 		if app.world.navigation_ready:
 			for npc in app.world.npcs:
 				npc.command("evacuate")
@@ -60,7 +60,7 @@ func start_alarm() -> void:
 	wave.loop_mode = AudioStreamWAV.LOOP_FORWARD
 	wave.loop_end = 22050
 	alarm.stream = wave
-	alarm.volume_db = -16
+	alarm.volume_db = -6
 	add_child(alarm)
 	alarm.play()
 
@@ -86,21 +86,14 @@ func tick(delta: float) -> void:
 		var toward: Vector3 = Vector3(0, 1.6, -41.3) - app.player.camera.global_position
 		if -app.player.camera.global_basis.z.dot(toward.normalized()) > 0.65:
 			fired.append("figure")
-			figure = Node3D.new()
+			figure = app.shadow.silhouette()
 			app.world.add_child(figure)
-			for part in [[Vector3(0, 1.3, -41.3), Vector3(0.6, 1.4, 0.12)], [Vector3(0, 2.2, -41.3), Vector3(0.4, 0.4, 0.12)]]:
-				var mesh := MeshInstance3D.new()
-				var shape := BoxMesh.new()
-				shape.size = part[1]
-				mesh.mesh = shape
-				mesh.position = part[0]
-				var material := StandardMaterial3D.new()
-				material.albedo_color = Color(0.01, 0.01, 0.015)
-				material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-				mesh.material_override = material
-				figure.add_child(mesh)
-			figure_time = 1.8
+			figure.position = Vector3(0, 0.05, -43.2)
+			figure.rotation.y = PI
+			figure_time = app.shadow.SIGHTING_DURATION
 	if figure_time > 0:
+		if is_instance_valid(figure):
+			app.shadow.approach(figure, delta)
 		figure_time = maxf(0, figure_time - delta)
 		if figure_time == 0 and is_instance_valid(figure):
 			figure.queue_free()

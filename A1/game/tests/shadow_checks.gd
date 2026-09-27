@@ -21,12 +21,16 @@ func run() -> void:
 	app.shadow.rng.seed = 42
 	check(app.shadow.try_sighting(), "Visible reachable exploration anchor produces a sighting")
 	check(not app.shadow.chasing and app.shadow.sightings == 1 and app.mode == "play", "Exploration sighting is harmless")
+	var start_distance: float = app.shadow.sighting.position.distance_to(app.player.position)
+	await frames(12)
+	check(app.shadow.sighting.position.distance_to(app.player.position) < start_distance, "Harmless sighting moves toward player")
+	var paused_position: Vector3 = app.shadow.sighting.position
 	var seconds: float = app.shadow.sighting_time
 	app.pause_game()
 	await frames(30)
-	check(app.shadow.sighting_time == seconds, "Pause freezes sighting lifetime")
+	check(app.shadow.sighting_time == seconds and app.shadow.sighting.position == paused_position, "Pause freezes sighting lifetime")
 	app.resume()
-	await frames(130)
+	await frames(55)
 	check(not is_instance_valid(app.shadow.sighting), "Sighting disappears after a brief appearance")
 	app.progress.stage = 6
 	app.player.position = Vector3(0, 0.05, 3)
@@ -52,11 +56,11 @@ func run() -> void:
 	app.narrative.save_checkpoint()
 	app.show_decision()
 	app.narrative.choose("isolate")
-	check(app.shadow.chasing and app.shadow.grace == 6, "Isolation starts pursuit with a six-second head start")
+	check(app.shadow.chasing and app.shadow.grace == 3, "Isolation starts pursuit with a three-second head start")
 	app.pause_game()
 	var at: Vector3 = app.shadow.position
 	await frames(30)
-	check(app.shadow.position == at and app.shadow.grace == 6, "Pause freezes shadow and head start")
+	check(app.shadow.position == at and app.shadow.grace == 3, "Pause freezes shadow and head start")
 	app.resume()
 	app.player.position = Vector3(0, 0.05, 3)
 	for i in 1600:
@@ -66,7 +70,7 @@ func run() -> void:
 	check(app.shadow.position.z > -2, "Pursuer physically traverses observation gallery and control")
 	app.retry_checkpoint()
 	await frames(5)
-	check(not app.shadow.chasing and app.shadow.grace == 6 and not app.shadow.body.visible, "Death retry resets shadow state")
+	check(not app.shadow.chasing and app.shadow.grace == 3 and not app.shadow.body.visible, "Death retry resets shadow state")
 	app.narrative.choose("isolate")
 	# Walk the actual player with normal sprint input along the evacuation corridor.
 	for destination in [Vector3(0, 0, -34), Vector3(0, 0, -12), Vector3(0, 0, 0), Vector3(-13, 0, 0)]:
