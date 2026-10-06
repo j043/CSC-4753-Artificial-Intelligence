@@ -1,0 +1,343 @@
+﻿Blackwell: Last Shift - actual user prompt log
+September 18, 2026 | Tool: Codex in VS Code
+Scope: user-authored task text available in this session. IDE context and assistant/tool output omitted. No earlier development history is claimed.
+
+[1] Initial request
+hello Astra! you and I are going to get started today setting up the infrastructure for a simple game. I have some acceptance criteria to give you, and there are two things I want to do today: I want to draft a spec inside of the A1 directory first, following the following guidelines: overview, assignment summary, acceptance criteria, files, and implementation notes. If this is not part of the acceptance criteria already, this assignment needs a README at the root of the A1 directory, with instructions on how to run. Do you have any questions for me?
+
+[2] Acceptance criteria introduction
+I want to draft a README for this course repo, but ill give you specifics on that later. here are the AC:
+
+[2a] Attached acceptance criteria (verbatim)
+Create a detailed implementation specification from the following acceptance criteria. Do not begin implementation yet.
+
+The project will be developed in Godot using VS Code with Codex. Preserve the required scope, identify unresolved decisions, and propose an incremental implementation plan. Map every acceptance criterion to an implementation milestone and a concrete verification method.
+
+- Project concept
+  - Working title: Blackwell: Last Shift.
+  - Genre: single-player, first-person 3D atmospheric horror.
+  - Setting: a fictional nuclear research facility during an emergency lockdown.
+  - Premise: an experimental energy system has produced an entity that imitates human voices over the facility intercom.
+  - The player is a night-shift technician trapped with two surviving employees.
+  - The player must restore emergency power, isolate the experimental chamber, and reach the evacuation lift.
+  - Facility procedures and equipment are fictional, simplified gameplay puzzles.
+  - Target a complete first playthrough of approximately 15–25 minutes, verified through playtesting.
+  - Prioritize a complete, polished short game before adding optional features.
+
+- AC-01 — Engine and project setup
+  - The game is implemented in a stable Godot release, with the exact version documented.
+  - Gameplay code uses GDScript.
+  - The submitted project opens in the documented Godot version without missing files or script errors.
+  - Source code is editable in VS Code.
+  - All required assets are included or obtained through clearly documented setup steps.
+
+- AC-02 — First-person controls
+  - The player can walk using WASD and look around using the mouse.
+  - The player can sprint while holding Shift.
+  - The player can interact using E and toggle a flashlight using F.
+  - Walls, floors, closed doors, and major objects have working collision.
+  - Opening dialogue releases the mouse for selecting options and prevents player movement.
+  - Closing dialogue restores normal controls.
+  - Escape opens a pause menu and releases the mouse.
+
+- AC-03 — Facility layout
+  - One connected level contains six identifiable areas: security station, control room, maintenance workshop, coolant gallery, experimental chamber observation room, and evacuation lift.
+  - Signs or environmental landmarks allow the player to distinguish these areas.
+  - At least two routes are initially blocked and become accessible through objective completion.
+  - Every required area is reachable during the intended progression.
+  - The player cannot become permanently trapped by ordinary exploration or door interactions.
+
+- AC-04 — Two distinct NPCs
+  - Mara Voss, an engineer, understands the facility’s machinery and assists with repairs.
+  - Eli Ward, a security officer, knows access routes and assists with security systems.
+  - Both NPCs have distinguishable appearances, visible names during dialogue, and different dialogue styles.
+  - Both contribute to required objectives.
+  - Each NPC visibly changes behavior at least once in response to a completed objective or horror event.
+
+- AC-05 — Player-to-NPC dialogue
+  - Approaching and targeting an available NPC displays a conversation prompt.
+  - Pressing E opens a dialogue interface identifying the speaker.
+  - Conversations use selectable written dialogue options.
+  - Each NPC supports questions about the situation, the current objective, and their area of expertise.
+  - At least two conversations per NPC offer two or more meaningful response choices.
+  - Each NPC has at least one response that changes after an objective is completed.
+  - The player can exit any nonessential conversation.
+  - Repeating a conversation cannot duplicate items, repeat completed rewards, or corrupt progression.
+  - Dialogue requires no microphone, runtime language model, account, API key, or internet connection.
+
+- AC-06 — NPC commands
+  - The player can command each NPC to follow or wait.
+  - Following NPCs navigate around level obstacles and stop near the player.
+  - Waiting NPCs remain in place until recalled or moved by a clearly communicated story event.
+  - The player can assign each NPC at least one role-specific objective task.
+  - NPCs acknowledge accepted commands.
+  - If a task is unavailable, the NPC explains the missing prerequisite.
+  - NPCs cannot be ordered through locked doors or solid geometry.
+  - A blocked or interrupted NPC can recover without requiring a game restart.
+
+- AC-07 — NPC-to-NPC communication
+  - At least three distinct exchanges occur between Mara and Eli.
+  - At least one exchange begins automatically when a defined objective or location trigger occurs.
+  - An exchange includes alternating lines from both NPCs, with speaker names shown.
+  - At least one exchange causes an observable action, such as Eli opening access after Mara confirms a repair.
+  - At least one exchange changes a later dialogue option or objective hint.
+  - Mandatory conversations do not overlap with other dialogue.
+  - NPC conversations cannot silently complete out of range and leave the player without required information.
+  - Essential information remains available through the objective display or follow-up dialogue.
+
+- AC-08 — Objective progression
+  - The main objective sequence is:
+    1. Meet the survivors and learn about the lockdown.
+    2. Retrieve a replacement component from maintenance.
+    3. Direct Mara to restore emergency power.
+    4. Coordinate with Eli to access the observation room.
+    5. Isolate the experimental chamber.
+    6. Reach and activate the evacuation lift.
+  - The interface shows the current objective and updates when its completion conditions are met.
+  - Objectives cannot complete before their prerequisites are satisfied.
+  - Required items remain obtainable until used.
+  - The player can request a useful current-objective hint from an NPC.
+  - A new player can finish using only information provided inside the game.
+
+- AC-09 — Cooperative puzzle
+  - At least one required puzzle involves the player and both NPCs.
+  - Proposed puzzle: Mara operates a maintenance panel, Eli holds a security override, and the player activates chamber isolation from the control console.
+  - Each participant’s readiness is communicated through dialogue or visible indicators.
+  - Activating the console prematurely explains which condition is missing.
+  - Incorrect attempts are retryable and do not permanently block progression.
+
+- AC-10 — Horror and atmosphere
+  - The level uses an industrial visual style with emergency lighting and readable navigation.
+  - At least four distinct scripted horror events occur:
+    - A figure briefly appears behind an observation window.
+    - An intercom message imitates a known NPC.
+    - Lighting fails or changes in an occupied corridor.
+    - A containment alarm initiates the final escape sequence.
+  - At least one event receives a visible or textual reaction from both NPCs.
+  - Essential clues remain readable at the default brightness.
+  - Sudden sounds respect the user’s volume settings.
+  - Re-entering a trigger does not unintentionally replay a one-time event.
+
+- AC-11 — Clues and a meaningful choice
+  - At least three optional written clues explain the experiment and the voice imitation.
+  - Collected clues can be reread during the current playthrough.
+  - Near the final objective, the intercom gives an instruction that conflicts with the survivors’ advice.
+  - Earlier clues and conversations give the player a reasonable basis for deciding whom to trust.
+  - The player’s decision produces one of two distinct endings.
+  - Each ending clearly communicates the consequence of the decision.
+  - Completing either ending allows the player to return to the menu or restart.
+
+- AC-12 — Final escape sequence
+  - Successful chamber isolation begins a clearly communicated evacuation countdown.
+  - The remaining time is visible.
+  - The evacuation route remains navigable.
+  - Both NPCs attempt to reach the lift.
+  - Reaching the lift with the required conditions produces the successful escape ending.
+  - Countdown expiration produces a clear failure screen.
+  - A checkpoint immediately before the final decision allows retrying without replaying the whole game.
+  - Retrying resets the timer, NPC positions, doors, and relevant objective state consistently.
+
+- AC-13 — Interface and accessibility
+  - A main menu provides Start, Settings, and Quit.
+  - The pause menu provides Resume, Settings, Restart Checkpoint when available, and Return to Menu.
+  - Pausing freezes gameplay, NPC actions, and countdown timers.
+  - Interaction prompts identify the action and its key.
+  - All story-critical speech is available as text with speaker labels.
+  - Settings include mouse sensitivity, master volume, and brightness.
+  - Camera shake and head bob can be disabled if implemented.
+  - Essential information does not rely on color alone.
+  - Text remains readable at 1280×720 and 1920×1080.
+
+- AC-14 — Presentation and assets
+  - Use a consistent, simple 3D art style suitable for a small project.
+  - Required rooms, characters, and interactable objects are visually distinguishable.
+  - The flashlight illuminates nearby surfaces and useful navigation details.
+  - Interaction targets are identifiable through prompts or visual feedback.
+  - Audio includes ambient facility noise and distinct cues for doors, objective completion, and alarms.
+  - Full voice acting is optional.
+  - Third-party assets have compatible licenses and are listed with attribution where required.
+
+- AC-15 — Performance and reliability
+  - The game is designed for ordinary desktop or laptop hardware, with modest graphics requirements.
+  - Graphics settings include a low-quality preset and adjustable resolution.
+  - Target approximately 30 FPS or better on the low preset on tested hardware; this is not a guarantee for every device.
+  - Document the hardware and settings actually used for testing.
+  - A complete playthrough runs without crashes, progression blockers, or unhandled script errors.
+  - Starting a new game resets items, objectives, conversations, NPC behavior, and one-time events.
+
+- AC-16 — Easy execution and portability
+  - The game does not depend on the developer’s specific computer, file paths, or installed development tools.
+  - Provide a packaged desktop build for the professor’s operating system once confirmed.
+  - The player can extract the package and launch the game without installing Godot or VS Code.
+  - The packaged game works offline without accounts, API keys, or paid services.
+  - Include all assets and dependencies required to play.
+  - Provide brief instructions covering launch, controls, graphics settings, and supported operating systems.
+  - Verify that the exported build launches from a folder separate from the development project.
+  - Test on a second computer when available and document any compatibility limitations.
+  - A browser build remains optional if it improves access without delaying the desktop version.
+
+- AC-17 — Assignment deliverables
+  - Include the complete Godot source project.
+  - Include the playable exported build.
+  - Include a plain-text log of the actual prompts used during development.
+  - Include a README with the engine version, setup instructions, launch instructions, and controls.
+  - Include asset credits and required license information.
+  - Include a short development summary describing iterations, problems encountered, fixes, and lessons learned.
+  - Include a demonstration checklist showing player dialogue, NPC commands, NPC-to-NPC communication, the cooperative puzzle, and an ending.
+  - Package submission materials in a ZIP for manual submission.
+  - Assignment deadline: September 28, 2026, at 7:00 a.m. US Central.
+
+- Optional stretch goals
+  - A short encounter with a patrolling entity.
+  - Additional ambient NPC conversations.
+  - Extra environmental clues.
+  - Persistent save and load.
+  - A tested browser build.
+
+- Scope boundaries
+  - No multiplayer.
+  - No combat system.
+  - No open world or procedurally generated level.
+  - No free-form typed or spoken dialogue.
+  - No runtime AI service dependency.
+  - No complex inventory management.
+  - Required scope takes priority over every stretch goal.
+
+- Required specification output
+  - Explain the gameplay loop and narrative progression.
+  - Define scenes, systems, responsibilities, and data structures.
+  - Describe NPC navigation, commands, conversations, and recovery behavior.
+  - Define objective prerequisites, dialogue triggers, ending conditions, and checkpoint state.
+  - Identify technical risks and unresolved decisions, especially target hardware.
+  - Propose milestones that produce a playable build early.
+  - Provide a verification checklist mapped to the acceptance criterion IDs.
+  - Distinguish implemented behavior, planned behavior, and verified behavior throughout development.
+[3] Repository access question
+that looks great! question: do you have the ability to see the repo im connected to and do actions with it?
+
+[4] Commit and M0 discussion
+awesome, do you have any questions for me before we commit this spec and get started with M0?
+
+[5] M0 environment answers
+unknown, I will be testing on this machine, and no I do not have Godot installed, nor do i have a required version. ive never worked with it before so I am unsure on the best version!
+
+[6] September 18, 2026 | Persistent prompt logging request
+Oh i wanted to do something else that i totally forgot: I want every prompt I give you to be saved in a text file while we work. How can we make sure this is recalled from session to session?
+
+[7] September 18, 2026 | Simplifying startup
+thank you! I have one more question concerning the M0 work: is there any way to simplify the startup process? or does it HAVE to run through Godot that way?
+
+[8] September 18, 2026 | Submission dependencies
+will all required packages be zipped up with the executable for submission?
+
+[9] September 18, 2026 | README audience structure
+awesome, lets adjust the structure of the A1 readme to specify execution instructions for my professor to follow vs dev instructions for me
+
+[10] September 18, 2026 | M0 completion status
+yippee, thank you! is M0 complete?
+
+[11] September 18, 2026 | User confirms M0 start screen
+good news. I was able to follow the setup steps and see the M0 start screen!
+
+[12] September 18, 2026 | Quit test and M0 commit readiness
+yes it did. is there anything else that needs to be confirmed before committing the M0 work?
+
+[13] September 18, 2026 | Commit M0
+awesome, lets commit this work, thank you!
+
+[14] September 21, 2026 | Resume A1 and locate specification
+hi codex! we're going to continue our work on A1, so you can continue recording prompts. It looks like somehow the spec got deleted, is there a way it can be remade from session memory? 
+
+[15] September 21, 2026 | M1 and M2 preparation
+oh whoops youre right, okay today I want to work on M1 and M2. any questions before we get started?
+
+[16] September 21, 2026 | Begin M1
+awesome thanks, lets get started with M1
+
+[17] September 21, 2026 | M1 walkthrough and commit
+i just walked through and it looks great! lets commit this before moving on to M2. 
+
+[18] September 21, 2026 | Begin M2
+yippee! onward to M2! 
+
+[19] September 21, 2026 | Simplify dialogue and correct following
+ok a few notes: i think there are too many dialogue options. its a bit overwhelming to have so much information at once. is there any way the NPCs can present necessary information only and a limited amount of dialog options. also, the "follow me" feature does work, but the NPCs wont allow you to look at them anymore lol. they try to stay strictly behind the player at all times, and move away from POV when you turn around. 
+
+[20] September 21, 2026 | Escape closes dialogue first
+can we bind ESC to closing the dialogue menu when the menu is open? this forces the menu to close before the pause menu can be opened, improving UX
+
+[21] September 21, 2026 | Dialogue layout and feedback presentation
+lets make the dialogue text larger to focus the users eye, and lets organize the dialogue options below left to right instead of up and down. additionally, lets remove the "end conversation" button and instead allow the user to simply escape out of it, like they already do. next, lets make the dialogue menu close when you ask them to do something and then they immediately go do it, like following. lastly, lets have the users dialogue that appears OUTSIDE of the menu, like when they say "i cant go there," be typed across the bottom of the screen, persist for 5 seconds, then disappear. sound good?
+
+[22] September 21, 2026 | M1 and M2 summary request
+that looks great! canyou give me a brief summary of what was done in these two milestones?
+
+[23] September 21, 2026 | Approve and commit M2
+awesome, it looks fantastic. those fixes really improved the feel. go ahead and commit this and we will pick up m3 tomorrow! 
+
+[24] September 25, 2026 | Begin M3
+hello codex! lets get started with M3, shall we?
+
+[25] September 25, 2026 | Replace interaction feedback and simplify NPC dialogue
+lets change the dialog scroll at the bottom to override the last clicked output. for example, if the bottom still reads "following you" from one of the npcs, then make sure clicking something else replaces the current dialog scroll. also, lets reduce the amount of dialog options when speaking to NPCs. Id rather them give you more info off the bat, instead of having you search through a ton of questions
+
+[26] September 25, 2026 | Current main-flow playability
+is the main flow of the game actually playable at this moment?
+
+[27] September 25, 2026 | Component pickup and Mara response mismatch
+when i collect the component and talk to mara again, she still says she needs the component 
+
+[28] September 25, 2026 | Successful playthrough and shorter dialogue
+ok i just walked through the whole game and it went well! lets do less intermediary dialog, and lets also shorten the amount of time that its on screen to 3 seconds
+
+[29] September 25, 2026 | Commit M3 and begin M4
+lets commit this and then get started on m4!
+
+[30] September 26, 2026 | Approve both M4 endings, commit and begin M5
+m4 looks fantastic!!!! i love the two endings!! i played through both and they're both fun. lets commit this work, then move on to m5!
+
+[31] September 26, 2026 | Professor platform assumption
+not sure but assuming windows
+
+[32] September 26, 2026 | Random shadow sightings and lethal evacuation chase
+it looks great! lets do two things. first, i realy loved the creepy shadow that appears in the chamber during isolation, but i think it would be cool if it shows up randomly during the rest of the game, and then chases you to the lift. if it catches you before you reach the lift, you die
+
+[33] September 26, 2026 | Facility and NPC graphics request
+i would love you to spend some time really working on the graphics! the lighting is great, but i want to make the game actually look like youre in a nuclear facility, and the npcs look more like people
+
+[34] September 26, 2026 | Darker game and ground-level journal books
+hi codex, im back!! lets continue thte work for m4. can we make the entire game darker, so that you rely more on the flashlight? lets also make the journals little books on the ground instead of big rectangles
+
+[35] September 26, 2026 | Title-screen logo and Mara long hair
+yayy! looks fantastic. can we give the title screen a cool logo for the game? and can we give mara long hair 
+
+[36] September 26, 2026 | Reshape oval-based characters
+this looks really fun lol is there any way we can build these shapes without using all ovals? 
+[Attachment: user supplied a screenshot of Mara viewed from behind, showing oval hair and body shapes.]
+
+[37] September 26, 2026 | Lock maintenance until introductions and isolate picked-up journal view
+can the maintence room be closed until you speak to mara and eli? and can we remove the ability to see other journals when you pick one up?
+
+[38] September 26, 2026 | Commit progress in focused chunks
+this looks great. ill be back to finish this up. lets commit this in a few focused chunks! 
+
+[39] September 26, 2026 | Begin M6 and remove hovering labels
+hi hi! im ready to close this assignment out, so lets finish up the work we need to do for m6. but first, lets remove the hovering text labels above the game items and rooms
+
+[40] September 26, 2026 | Sliding security doors and spider-like shadow
+one last thing, can we make the locked doors look like locked, sliding doors? and have them side open when unlocked? and also can we make the shadow entity big and scary and spider-like
+
+[41] September 26, 2026 | Restore humanoid shadow and shorten appearances
+THAT LOOKS AWESOME! i actually really miss the old entity though, can we revert it back to a humanoid shape? and lets also make it move towards you when it appears? we can make it disappear more quickly too. also, towards the end when the entity appears in the chamber, lets shorten the time until it moves to 3 seconds
+
+[42] September 26, 2026 | Louder alarm, footsteps, and creepy ambience
+awesome!!! one last thing: can we increase the volume of the alarm sound at the end, add footsteps when walking, and add a creepy ambience to the background?
+
+[43] September 26, 2026 | Approve M5 additions, commit, and begin M6
+awesome, that looks and sounds fantastic. lets commit this work as additions to the m5 milestone, and then get to work on m6
+
+[44] September 26, 2026 | Successful five-minute playthroughs and unavailable second computer
+we cant do another computer test, but i just did a few full playthroughs and everything worked great. it took about 5 minutes. what else needs to be done
+
+[45] September 26, 2026 | Offline and 16-minute new-player success, finalize and commit
+everything worked offline, a new player using my machine took about 16 minutes to complete the game. lets wrap up documentation and commit
