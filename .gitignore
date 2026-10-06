@@ -1,6 +1,3 @@
-# vscode
-settings.json
-
 # Godot-generated editor caches and imported resources.
 .godot/
 .import/
@@ -13,4 +10,3 @@ builds/
 submission/
 
 # Keep project files, export presets, source assets, and .uid files tracked.
-
