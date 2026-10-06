@@ -73,7 +73,7 @@ Do not mark M1 fully playtested until the manual results are recorded.
 
 ### M1 export result
 
-Windows release export succeeded (`builds/m1-export.log`). Copied only `Blackwell.exe` and `Blackwell.pck` to `C:/Users/jwrig/AppData/Local/Temp/Blackwell-M1-a0f83a073c854330a9d0c3634db8a5b9` and launched there with `--headless --quit-after 5`: printed `Blackwell M1 ready`, empty standard error, exit 0. Output/exit were captured with a waited process; the first direct GUI-executable invocation did not produce the requested log file. This verifies standalone startup, not a full exported-build playthrough.
+Windows release export succeeded (`builds/m1-export.log`). Copied only `Blackwell.exe` and `Blackwell.pck` to `<temporary-folder>/Blackwell-standalone-check` and launched there with `--headless --quit-after 5`: printed `Blackwell M1 ready`, empty standard error, exit 0. Output/exit were captured with a waited process; the first direct GUI-executable invocation did not produce the requested log file. This verifies standalone startup, not a full exported-build playthrough.
 
 `git diff --check` reports only the preserved trailing space in verbatim prompt entry 14. It is intentionally retained under the repository's prompt-preservation rule; checking with end-of-line whitespace ignored passes.
 
@@ -119,7 +119,7 @@ Local logs: `builds/m2-checks.log`, `builds/m2-regression.log`, `builds/m2-visua
 
 ### M2 export result
 
-Windows release export succeeded with no reported script errors. Copied the executable and PCK to `C:/Users/jwrig/AppData/Local/Temp/Blackwell-M2-e8fc9f51d9a44ae184a47b531dccd6ac`. Attempting the external `--script` test harness only launched the menu and produced no test assertions; the idle instance was stopped. Therefore no exported-build gameplay pass is claimed. Ordinary standalone startup with `--headless --quit-after 5` printed `Blackwell M2 ready`, produced no standard error, and exited 0. Source gameplay checks and actual-renderer source captures passed separately; a full exported-build manual playthrough remains pending.
+Windows release export succeeded with no reported script errors. Copied the executable and PCK to `<temporary-folder>/Blackwell-standalone-check`. Attempting the external `--script` test harness only launched the menu and produced no test assertions; the idle instance was stopped. Therefore no exported-build gameplay pass is claimed. Ordinary standalone startup with `--headless --quit-after 5` printed `Blackwell M2 ready`, produced no standard error, and exited 0. Source gameplay checks and actual-renderer source captures passed separately; a full exported-build manual playthrough remains pending.
 
 ### M2 playtest revisions - September 21, 2026
 

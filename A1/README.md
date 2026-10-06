@@ -1,6 +1,6 @@
 # Blackwell: Last Shift
 
-A1 for CSC-4753 Artificial Intelligence. See [the specification](spec.md) for scope and acceptance criteria.
+A single-player, first-person 3D atmospheric horror game built with Godot and GDScript for CSC-4753 Artificial Intelligence. Explore a locked-down research facility, coordinate two survivors, and choose how to escape. See [the specification](spec.md) for the design and original assignment criteria.
 
 ## Current status
 
@@ -8,20 +8,20 @@ M6 documentation and acceptance are finalized for submission on September 26, 20
 
 The completed game includes six objectives, two survivors, cooperative tasks, two endings, checkpoint retry, clues, a lethal evacuation chase, industrial scenery, and persistent settings. Automated checks pass. The user reports successful offline play and several complete playthroughs; a new player completed the game in approximately 16 minutes on the same computer, meeting the 15-25 minute target. Another computer was unavailable and was not tested.
 
-## For the professor: run the submitted game
+## Play a packaged Windows build
 
 No Godot editor, VS Code, installation of development tools, accounts, API keys, or internet connection is required to play the packaged game.
 
 ### Launch
 
-The current export targets **Windows x86_64**. The user assumes the professor uses Windows; this is not independently confirmed. macOS/Linux builds are not included.
+The current export targets **Windows x86_64**. macOS/Linux builds are not included.
 
 1. Extract the entire submission ZIP into a writable folder. Do not run the executable from inside the ZIP viewer.
 2. Open `A1/builds/windows/` inside the extracted submission.
 3. Double-click **`Blackwell.exe`**. Keep **`Blackwell.pck`** in the same folder; it contains the game's packaged resources.
 4. Select **Start - initial lockdown** to explore with the initial gates locked, or **Facility tour - gates open** to walk all six areas. Press Escape for Resume, Return to Menu, or Quit.
 
-The submission candidate is `submission/Blackwell-A1-M6.zip` in the working repository. It includes source, the Windows executable and resources, documentation, prompts, credits, and licenses. Older M5 archives are obsolete. A source-only Git checkout does not include generated builds or archives.
+A Git checkout includes source and documentation. To play from source, follow the setup instructions below. To create a Windows package, export the game and run the packaging script. Generated builds and archives are excluded from Git; the package includes source, the Windows executable and resources, documentation, credits, and licenses. Private development conversations are excluded.
 
 ### Controls and graphics
 
@@ -59,7 +59,7 @@ Exchanges wait until conversations and earlier subtitles finish. Each subtitle t
 
 ### Engine and source setup
 
-Use **Godot 4.7.2 Standard**, with **GDScript** and the **Compatibility** renderer. The .NET edition and SDK are unnecessary for this project. The professor's operating system is unknown; Windows x86_64 is the initial development target, not a confirmed submission platform.
+Use **Godot 4.7.2 Standard**, with **GDScript** and the **Compatibility** renderer. The .NET edition and SDK are unnecessary for this project. Windows x86_64 is the included export target.
 
 1. Download the Windows x86_64 Standard editor from the [official Godot 4.7.2 archive](https://godotengine.org/download/archive/4.7.2-stable/). Extract the ZIP into a tools folder and run the editor executable; no installer is required.
 2. In Godot's Project Manager, choose **Import**, select `A1/game/project.godot`, and open the project.
@@ -70,27 +70,26 @@ Local tooling, when downloaded by Codex, lives in the ignored `A1/.tools/` direc
 
 ### Export a standalone build
 
-Install the **matching 4.7.2 export templates** through Godot's **Editor > Manage Export Templates**. Under **Project > Export**, select the included **Windows Desktop** preset and export to `A1/builds/windows/Blackwell.exe`. Keep the companion `Blackwell.pck` file with the executable. On the current development machine, the matching Windows x86_64 templates are already installed.
+Install the **matching 4.7.2 export templates** through Godot's **Editor > Manage Export Templates**. Under **Project > Export**, select the included **Windows Desktop** preset and export to `A1/builds/windows/Blackwell.exe`. Keep the companion `Blackwell.pck` file with the executable.
 
 Running the project with **F5** uses the current source. Launching `Blackwell.exe` uses the last exported version; export again after source changes to update it. The local M6 export is in `builds/windows/`, which is ignored by Git.
 
-### Prepare the submission ZIP
+### Create a distribution ZIP
 
 After exporting, run `python A1/package_submission.py` from the repository root to rebuild and verify the candidate and its SHA-256 sidecar. This command packages the current export; it does not re-export Godot.
 
-1. Confirm the professor's operating system and export the appropriate desktop build. Update the professor's launch instructions if the platform or file layout changes.
-2. Include the `A1/` folder with this README, complete `game/` source, `builds/` executable and companion files, prompt log, credits and required licenses, and the documents linked below.
+1. Export the Windows build using the included preset. For other platforms, add an appropriate preset and adapt the packaging script and launch instructions.
+2. Include the `A1/` folder with this README, complete `game/` source, `builds/` executable and companion files, credits and required licenses, and the documents linked below.
 3. Exclude local `.tools/`, generated `game/.godot/` caches, and previous submission archives.
-4. Extract the ZIP into a separate folder and follow the professor's instructions. Verify that all runtime files are present and the game works offline without development tools. Record the actual checks and any limitations in `docs/verification.md`.
+4. Extract the ZIP into a separate folder and follow the launch instructions above. Verify that all runtime files are present and the game works offline without development tools. Record the actual checks and any limitations in `docs/verification.md`.
 
 The engine uses Compatibility rendering. A rendered automated Low/720p progression run averaged 118.7 FPS over 71.94 seconds on an i7-12650H / RTX 3050 Ti laptop. This uses scripted player relocations and real NPC traversal, not continuous human-route profiling. User playthroughs reported no blockers; another computer was unavailable. See the verification record for methodology and environment diagnostics.
 
-## Deliverables
+## Project documentation
 
-- [Actual prompt log](prompts.txt)
 - [Asset credits](CREDITS.md)
 - [Development summary](docs/development-summary.md)
 - [Verification record](docs/verification.md)
 - [Demonstration checklist](docs/demo-checklist.md)
 
-Deadline: September 28, 2026, 7:00 a.m. US Central. The final ZIP contains source, Windows build, and documentation. Manual submission remains the user's responsibility; packaging and committing do not submit it.
+The original assignment documents preserve the development and verification history. The public distribution omits the private prompt log.

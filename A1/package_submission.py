@@ -8,14 +8,16 @@ def main():
     assignment = Path(__file__).resolve().parent
     root = assignment.parent
     files = [assignment / name for name in (
-        "README.md", "spec.md", "prompts.txt", "CREDITS.md", "package_submission.py"
+        "README.md", "spec.md", "CREDITS.md", "package_submission.py"
     )]
     for folder in ("docs", "licenses", "game", "builds/windows"):
         files.extend(p for p in (assignment / folder).rglob("*")
-                     if p.is_file() and ".godot" not in p.parts and p.suffix != ".tmp")
+                     if p.is_file() and ".godot" not in p.parts and p.suffix != ".tmp"
+                     and p.name not in {"prompts.txt", "AGENTS.md"}
+                     and not p.name.startswith(".env"))
     required = [assignment / "builds/windows" / name for name in
                 ("Blackwell.exe", "Blackwell.pck", "README.txt")]
-    required += [root / "AGENTS.md", assignment / "game/project.godot",
+    required += [assignment / "game/project.godot",
                  assignment / "licenses/Godot-and-third-party.txt"]
     for path in files + required:
         if not path.is_file():
@@ -25,7 +27,6 @@ def main():
     with ZipFile(archive, "w", ZIP_DEFLATED) as bundle:
         for path in sorted(files):
             bundle.write(path, path.relative_to(root).as_posix())
-        bundle.write(root / "AGENTS.md", "A1/AGENTS.md")
     with ZipFile(archive) as bundle:
         bad = bundle.testzip()
         if bad:

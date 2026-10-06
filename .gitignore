@@ -14,3 +14,9 @@ submission/
 
 # Keep project files, export presets, source assets, and .uid files tracked.
 
+
+# Private development conversations and local credentials.
+A1/prompts.txt
+.env
+.env.*
+!.env.example
