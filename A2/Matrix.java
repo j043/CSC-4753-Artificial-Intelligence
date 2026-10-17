@@ -103,7 +103,7 @@ public class Matrix {
 
     // this * other, specifically
     public Matrix multiply(Matrix other) {
-        if (this.rows != other.columns) {
+        if (this.columns != other.rows) {
             return null;
         }
         else {
