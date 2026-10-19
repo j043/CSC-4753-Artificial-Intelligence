@@ -12,8 +12,7 @@ public class Main {
     // constants 
     public static final double LEARNING_RATE = 10.0; 
     public static final int MINI_BATCHES = 2; 
-    public static final int TRAINING_SETS = 2; 
-    public static final int LAYERS = 3; 
+    public static final int TRAINING_SETS = 2;  
     public static final int EPOCHS = 6; 
 
     public static void main(String[] args){
@@ -130,6 +129,7 @@ public class Main {
                 System.out.println("-------------------------------");
                 System.out.println("Mini batch " + j);
                 System.out.println("-------------------------------");
+                
                 // initialize total weight and bias gradients for each mini batch
                 Matrix total_weights1 = new Matrix(3, 4); 
                 Matrix total_weights2 = new Matrix(2, 3); 
@@ -182,7 +182,7 @@ public class Main {
                     total_biases2 = total_biases2.add(final_biasGradients); 
                 }
 
-                /* print out batch totals 
+                /* print out batch totals DEBUG
                 System.out.println("Total weight gradients for intermediate layer: "); 
                 total_weights1.print();
 
@@ -237,7 +237,7 @@ public class Main {
             }
         }
         /*  I need the Hadamard product here because (activations - expectedOutputs) is the same size as 
-            the activations matrix, but they are not guaranteed to be squares. Further xplanation in Matrix.java! 
+            the activations matrix, but they are not guaranteed to be squares. Further explanation in Matrix.java! 
         */
         return activations.sub(expectedOutputs).hadamard(activations).hadamard(one_minus_activations); 
     }
