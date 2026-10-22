@@ -26,6 +26,6 @@ This index will grow as new assignments are added. Each assignment's README cont
 
 | Assignment | Description | Documentation |
 | --- | --- | --- |
-| A1 — Blackwell: Last Shift | A first-person 3D atmospheric horror game being developed in Godot with GDScript. Planned features include commandable NPCs, branching dialogue, cooperative puzzles, and decision-based endings. | [Project README](https://github.com/j043/CSC-4753-Artificial-Intelligence/blob/Development/Assignment-1/A1/README.md) · [Specification](https://github.com/j043/CSC-4753-Artificial-Intelligence/blob/Development/Assignment-1/A1/spec.md) |
+| A1 — Blackwell: Last Shift | A first-person 3D atmospheric horror game built in Godot with GDScript. Features include commandable NPCs, branching dialogue, cooperative puzzles, and decision-based endings. | [Project README](https://github.com/j043/CSC-4753-Artificial-Intelligence/blob/Development/Assignment-1/A1/README.md) · [Specification](https://github.com/j043/CSC-4753-Artificial-Intelligence/blob/Development/Assignment-1/A1/spec.md) |
 
-A1 is in development on the `Development/Assignment-1` branch; the links above point to that branch.
+A1 source is maintained on the `Development/Assignment-1` branch; the links above point to that branch.
