@@ -2,14 +2,21 @@
     AUTHOR'S NOTES: 
 
     This Matrix class houses all of the properties and functions necessary for the neural-network's computations. 
+
     - The class contains 3 public fields: rows, columns, and data. 
-    - On an individual matrix, 4 functions can be performed: insert, transpose, scale, and print.
+
+    - On an individual matrix, 5 functions can be performed: insert, transpose, scale, print, and fillRandom.
+
     - On two matrices, 4 functions can be performed: add, subtract, multiply, and hadamard. 
     
-    The reason I include a Hadamard function as well as a multiply function is due to the fact that we cannot guarantee
-    that the activation matrix will be a square, and you can only multiply two matrices of the same dimension together 
-    if they are both squares. Therefore, we need a method to logically multiply each value in these same-size matrices, 
-    and the Hadamard product (or element-wise product) allows us to do so! 
+    The reason I include a Hadamard function as well as a multiply function is because the hadamard performs point-wise 
+    or element-wise multiplication instead of combining rows and columns with the dot product. For the backprop functions 
+    in particular (located in Network.java), we need each neuron's bias gradients to be multiplied by each neuron's sigmoid derivative. 
+    This simply isn't possibe with the dot product. 
+
+    I included the transpose for a similar reason; certain equations require two matrices to be of a very specific 
+    dimension in order to get a specific size out. The transpose allows us to "flip" a matrix and perform these equations 
+    easily! 
 
     - Jenny :) 
 */ 
@@ -27,7 +34,8 @@ public class Matrix {
         this.data = new double[rows][columns];
     }
 
-    // functions on individual matrices
+    // FUNCTIONS ON INDIVIDUAL MATRICES ///////////////////////////////////////////////////////////////////
+
     public void insert(int row, int column, double value) {
         if (row < 0 || row >= this.rows || column < 0 || column >= this.columns) {
             return;
@@ -66,7 +74,17 @@ public class Matrix {
         System.out.println();
     }
 
-    // functions on two matrices 
+    public void fillRandom() {
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.columns; j++) {
+                // Math.random() returns a double from 0 to 1. but we want -1 to 1
+                this.insert(i, j, (Math.random() * 2) - 1);
+            }
+        }
+    }
+
+    // FUNCTIONS ON TWO MATRICES ///////////////////////////////////////////////////////////////////
+
     public Matrix add(Matrix other) {
         if (this.rows != other.rows || this.columns != other.columns) {
             return null;
