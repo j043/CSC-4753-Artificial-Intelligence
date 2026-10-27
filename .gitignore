@@ -7,8 +7,10 @@ settings.json
 .tools/
 builds/
 submission/
-output.txt
+*.txt
 *.class
+*.csv 
+*.zip
 Wright_NeuralNetwork.zip
 
 # Keep project files, export presets, source assets, and .uid files tracked.
