@@ -266,7 +266,7 @@ public class Network {
         }
     }
 
-    // load weights and biases from a file
+    // load inputs and expectedOutputs from a file
     public void loadData(String filepath, Matrix[] inputs, Matrix[] expectedOutputs) throws FileNotFoundException { 
         try (Scanner reader = new Scanner(new File(filepath))) {
             for (int i = 0; i < inputs.length; i++) {
@@ -325,7 +325,7 @@ public class Network {
             }
 
             return network; 
-        }
+        } 
     }
 
     // display individual digits with ASCII art
@@ -338,6 +338,8 @@ public class Network {
                 int pixelIndex = i*28+j; 
                 double pixel = input.data[pixelIndex][0]; 
 
+                // pixel acts as a scalar to see which character in greyscale is indicative of the 
+                // input's original greyscale value at that position
                 int shade = (int) (pixel*(greyscale.length()-1)); 
                 System.out.print(greyscale.charAt(shade)); 
             }
